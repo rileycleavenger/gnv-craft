@@ -48,6 +48,13 @@ public class HeySirGameTests {
 	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> LIFECYCLE =
 		TEST_FUNCTIONS.register("lifecycle", () -> HeySirGameTests::lifecycle);
 
+	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> DRINKING =
+		TEST_FUNCTIONS.register("drinking", () -> HeySirGameTests::drinking);
+	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> SCOOTER =
+		TEST_FUNCTIONS.register("scooter_rental", () -> HeySirGameTests::scooterRental);
+	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> ENTITIES =
+		TEST_FUNCTIONS.register("npcs_spawn", () -> HeySirGameTests::npcsSpawn);
+
 	public HeySirGameTests(IEventBus modBus) {
 		TEST_FUNCTIONS.register(modBus);
 		modBus.addListener(HeySirGameTests::registerTests);
@@ -56,6 +63,9 @@ public class HeySirGameTests {
 	private static void registerTests(RegisterGameTestsEvent event) {
 		Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(GnvCraftMod.id("default"), new TestEnvironmentDefinition.AllOf(List.of()));
 		event.registerTest(GnvCraftMod.id("recipe_loaded"), new FunctionGameTestInstance(RECIPE.getKey(), testData(environment, 40)));
+		event.registerTest(GnvCraftMod.id("drinking"), new FunctionGameTestInstance(DRINKING.getKey(), testData(environment, 200)));
+		event.registerTest(GnvCraftMod.id("scooter_rental"), new FunctionGameTestInstance(SCOOTER.getKey(), testData(environment, 200)));
+		event.registerTest(GnvCraftMod.id("npcs_spawn"), new FunctionGameTestInstance(ENTITIES.getKey(), testData(environment, 200)));
 		event.registerTest(GnvCraftMod.id("lifecycle"), new FunctionGameTestInstance(LIFECYCLE.getKey(), testData(environment, 6000)));
 	}
 
@@ -67,6 +77,51 @@ public class HeySirGameTests {
 		boolean present = helper.getLevel().getServer().getRecipeManager()
 			.byKey(ResourceKey.create(Registries.RECIPE, GnvCraftMod.id("mcdonalds_giftcard"))).isPresent();
 		helper.assertTrue(present, "giftcard recipe is loaded");
+		helper.succeed();
+	}
+
+	private static void drinking(GameTestHelper helper) {
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.getAbilities().instabuild = false;
+		com.rileycleavenger.gnvcraft.drunk.DrunkSystem.set(player, 0.0F);
+		ItemStack beer = new ItemStack(ModItems.BEER.get());
+		beer.getItem().finishUsingItem(beer, helper.getLevel(), player);
+		helper.assertTrue(com.rileycleavenger.gnvcraft.drunk.DrunkSystem.get(player) == 1.0F, "a beer adds 1");
+		ItemStack shot = new ItemStack(ModItems.SHOT.get());
+		shot.getItem().finishUsingItem(shot, helper.getLevel(), player);
+		helper.assertTrue(com.rileycleavenger.gnvcraft.drunk.DrunkSystem.get(player) == 2.5F, "a shot adds 1.5");
+		com.rileycleavenger.gnvcraft.drunk.DrunkSystem.set(player, 50.0F);
+		helper.assertTrue(com.rileycleavenger.gnvcraft.drunk.DrunkSystem.get(player) == com.rileycleavenger.gnvcraft.drunk.DrunkSystem.DEATH_LEVEL, "level is capped at the death level");
+		helper.succeed();
+	}
+
+	private static void scooterRental(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		MinecraftServer server = level.getServer();
+		ServerPlayer renter = helper.makeMockServerPlayerInLevel();
+		ServerPlayer other = helper.makeMockServerPlayerInLevel();
+		renter.getAbilities().instabuild = false;
+		com.rileycleavenger.gnvcraft.entity.LimeScooterEntity scooter = com.rileycleavenger.gnvcraft.registry.ModEntities.LIME_SCOOTER.get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+		Vec3 at = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
+		scooter.snapTo(at.x, at.y, at.z, 0.0F, 0.0F);
+		level.addFreshEntity(scooter);
+		long now = HeySirDirector.clockTime(server);
+		helper.assertFalse(scooter.isRentedBy(renter, now), "locked at first");
+		renter.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(net.minecraft.world.item.Items.GOLD_INGOT, 3));
+		scooter.interact(renter, InteractionHand.MAIN_HAND, scooter.position());
+		helper.assertTrue(renter.getMainHandItem().getCount() == 2, "one gold ingot is used");
+		helper.assertTrue(scooter.isRentedBy(renter, now), "renter can ride");
+		helper.assertFalse(scooter.isRentedBy(other, now), "nobody else can ride");
+		helper.assertTrue(scooter.rentedUntil() == now + HeySirDirector.DAY_TICKS, "rented for exactly one in-game day");
+		helper.assertFalse(scooter.isRentedBy(renter, now + HeySirDirector.DAY_TICKS), "locks again after a day");
+		helper.succeed();
+	}
+
+	private static void npcsSpawn(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+		for (var type : java.util.List.of(com.rileycleavenger.gnvcraft.registry.ModEntities.DENNIS.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.FAN.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.PLANE.get())) {
+			helper.assertTrue(type.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND) != null, type + " can be created");
+		}
 		helper.succeed();
 	}
 

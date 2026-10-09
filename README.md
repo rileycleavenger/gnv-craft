@@ -6,7 +6,7 @@ A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable re
 
 ## What's in it
 
-- **A Gainesville world type.** Pick **GNV-Craft: Gainesville** under *More > World Type* when creating a world. The city is generated chunk by chunk from [OpenStreetMap](https://www.openstreetmap.org/) data baked into the mod: real roads, building footprints and heights, parks, water, parking lots and the airport. Origin (0, 0) is 13th St & University Ave, +X is east, +Z is south, 1 block = 1 m. V1 covers UF campus, Midtown, downtown and a corridor out to GNV airport.
+- **A Gainesville world type.** Pick **GNV-Craft: Gainesville** under *More > World Type* when creating a world. The city is generated chunk by chunk from [OpenStreetMap](https://www.openstreetmap.org/) data baked into the mod: real roads, building footprints and heights, parks, water, parking lots and the airport. Origin (0, 0) is 13th St & University Ave, +X is east, +Z is south, 1 block = 1 m. V1 covers UF campus, Midtown and downtown, plus a separate patch around GNV airport (about 7 km east and 4.5 km north of the origin, so use `/gnv tp airport`); the land in between is empty grass.
 - **Every building can be entered.** Buildings get a door at street level, rooms with doorways, window bands, lighting, ladders between floors and an **elevator** block on each floor of the shaft (right-click to go up, sneak + right-click to go down). Apartment buildings get units; bars get a counter, stools, a jukebox and a **bar tap**.
 - **Bars and drinking.** Click a bar tap for a beer (sneak-click for a shot). Beer adds 1 to your drunk level, shots 1.5, cocktails 2. Your view sways, rolls and narrows, sounds get lower and wobbly, the screen goes black near the top, and at level 9 you die of alcohol poisoning. The level drops by 1 every 2 in-game hours.
 - **Dennis** (13th St & University, by the Chick-fil-A): bald, very short pink shorts, cutoff green shirt. He dances all day and rambles about Linux at anyone who walks by.
@@ -25,6 +25,7 @@ A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable re
 ## Honest limits of V1
 
 - Buildings use real footprints and heights, but interiors are **generated**, not real. A researched per-building interior format (so The Standard, The Hub on 3rd Ave, bars, campus buildings and 201 NW 10th St can be rebuilt from floor plans) is not done yet.
+- The Standard has no name tag in OpenStreetMap, so it is not singled out yet. The Hub exists as a building but has only a generated interior.
 - Game day spawns a dense crowd of up to 300 fans around each player, not 90,000 entities.
 - Drunk vision is camera sway, tunnel vision and a black overlay (no screen-warp shader), and audio distortion is pitch/volume wobble, not true filtering.
 - Map data (c) OpenStreetMap contributors, ODbL. The map is rebuilt with `python3 tools/osm/fetch_gnv.py`.
