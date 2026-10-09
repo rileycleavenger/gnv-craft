@@ -2,33 +2,37 @@ package com.rileycleavenger.heysir.registry;
 
 import com.rileycleavenger.heysir.HeySirMod;
 import com.rileycleavenger.heysir.entity.HeySirEntity;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModEntities {
-	public static final ResourceKey<EntityType<?>> HEYSIR_KEY = ResourceKey.create(Registries.ENTITY_TYPE, HeySirMod.id("heysir"));
+	private static final DeferredRegister.Entities ENTITY_TYPES = DeferredRegister.createEntities(HeySirMod.MOD_ID);
 
 	// noSave: HeySir only exists near his player; the director recreates him from player data.
-	public static final EntityType<HeySirEntity> HEYSIR = Registry.register(
-		BuiltInRegistries.ENTITY_TYPE,
-		HEYSIR_KEY,
-		EntityType.Builder.<HeySirEntity>of(HeySirEntity::new, MobCategory.MISC)
+	public static final DeferredHolder<EntityType<?>, EntityType<HeySirEntity>> HEYSIR = ENTITY_TYPES.registerEntityType(
+		"heysir",
+		HeySirEntity::new,
+		MobCategory.MISC,
+		builder -> builder
 			.sized(0.8F, 2.1F)
 			.eyeHeight(1.9F)
 			.clientTrackingRange(10)
 			.noSave()
-			.build(HEYSIR_KEY)
 	);
 
 	private ModEntities() {
 	}
 
-	public static void initialize() {
-		FabricDefaultAttributeRegistry.register(HEYSIR, HeySirEntity.createAttributes());
+	public static void register(IEventBus modBus) {
+		ENTITY_TYPES.register(modBus);
+		modBus.addListener(ModEntities::onAttributeCreation);
+	}
+
+	private static void onAttributeCreation(EntityAttributeCreationEvent event) {
+		event.put(HEYSIR.get(), HeySirEntity.createAttributes().build());
 	}
 }

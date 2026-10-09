@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,6 +14,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -35,9 +36,9 @@ public final class HeySirDirector {
 	private HeySirDirector() {
 	}
 
-	public static void initialize() {
-		ServerTickEvents.END_SERVER_TICK.register(HeySirDirector::onServerTick);
-		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> RETRY_AT.remove(handler.getPlayer().getUUID()));
+	public static void register() {
+		NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> onServerTick(event.getServer()));
+		NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedOutEvent event) -> RETRY_AT.remove(event.getEntity().getUUID()));
 	}
 
 	/** Overworld clock ticks; advances with sleeping and /time add, unlike game time. */
@@ -46,11 +47,11 @@ public final class HeySirDirector {
 	}
 
 	public static HeySirData getData(ServerPlayer player) {
-		return player.getAttachedOrCreate(ModAttachments.HEYSIR_DATA);
+		return player.getData(ModAttachments.HEYSIR_DATA);
 	}
 
 	public static void setData(ServerPlayer player, HeySirData data) {
-		player.setAttached(ModAttachments.HEYSIR_DATA, data);
+		player.setData(ModAttachments.HEYSIR_DATA, data);
 	}
 
 	private static void onServerTick(MinecraftServer server) {
@@ -116,7 +117,7 @@ public final class HeySirDirector {
 		if (pos == null) {
 			return null;
 		}
-		HeySirEntity heySir = ModEntities.HEYSIR.create(level, EntitySpawnReason.EVENT);
+		HeySirEntity heySir = ModEntities.HEYSIR.get().create(level, EntitySpawnReason.EVENT);
 		if (heySir == null) {
 			return null;
 		}

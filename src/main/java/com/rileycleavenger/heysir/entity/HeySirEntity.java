@@ -234,7 +234,7 @@ public class HeySirEntity extends PathfinderMob {
 				} else if (this.distanceTo(target) < LOCK_ON_DISTANCE && this.hasLineOfSight(target)) {
 					this.mode = Mode.FOLLOW;
 					HeySirDirector.onLockOn(target);
-					this.playSound(ModSounds.HEY_SIR);
+					this.playSound(ModSounds.HEY_SIR.get());
 				}
 			}
 			case FOLLOW -> {
@@ -268,7 +268,7 @@ public class HeySirEntity extends PathfinderMob {
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (stack.is(ModItems.MCDONALDS_GIFTCARD)) {
+		if (stack.is(ModItems.MCDONALDS_GIFTCARD.get())) {
 			if (this.mode == Mode.LEAVE) {
 				return InteractionResult.PASS;
 			}
@@ -280,14 +280,14 @@ public class HeySirEntity extends PathfinderMob {
 					this.setTarget(payer, Mode.LEAVE);
 				}
 				this.startLeaving();
-				this.playSound(ModSounds.HEY_SIR);
+				this.playSound(ModSounds.HEY_SIR.get());
 				serverLevel.sendParticles(ParticleTypes.HEART, this.getX(), this.getY() + 2.2, this.getZ(), 6, 0.4, 0.3, 0.4, 0.0);
 			}
 			return InteractionResult.SUCCESS;
 		}
 		if (hand == InteractionHand.MAIN_HAND) {
 			if (!this.level().isClientSide()) {
-				this.playSound(ModSounds.HEY_SIR_EXCUSE_ME);
+				this.playSound(ModSounds.HEY_SIR_EXCUSE_ME.get());
 			}
 			return InteractionResult.SUCCESS;
 		}
@@ -315,12 +315,12 @@ public class HeySirEntity extends PathfinderMob {
 	protected @Nullable SoundEvent getAmbientSound() {
 		int roll = this.getRandom().nextInt(100);
 		if (roll < 3) {
-			return ModSounds.WIFE_AND_KIDS;
+			return ModSounds.WIFE_AND_KIDS.get();
 		}
 		if (roll < 20) {
-			return ModSounds.HEY_SIR_EXCUSE_ME;
+			return ModSounds.HEY_SIR_EXCUSE_ME.get();
 		}
-		return ModSounds.HEY_SIR;
+		return ModSounds.HEY_SIR.get();
 	}
 
 	@Override

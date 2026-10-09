@@ -60,6 +60,6 @@ public final class SpawnFinder {
 		BlockPos floor = pos.below();
 		return level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
 			&& level.getFluidState(pos).isEmpty()
-			&& level.noCollision(ModEntities.HEYSIR.getSpawnAABB(x, y, z));
+			&& level.noCollision(ModEntities.HEYSIR.get().getSpawnAABB(x, y, z));
 	}
 }

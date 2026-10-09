@@ -1,6 +1,6 @@
 # HeySir
 
-A Fabric mod for Minecraft Java 26.3. A man in a red shirt and old jeans rides around on a red bike with the seat removed, follows you, and keeps saying "Hey Sir" until you give him a McDonalds Giftcard.
+A NeoForge mod for Minecraft Java 26.2. A man in a red shirt and old jeans rides around on a red bike with the seat removed, follows you, and keeps saying "Hey Sir" until you give him a McDonalds Giftcard.
 
 ![HeySir riding](docs/heysir-riding.png)
 
@@ -21,14 +21,19 @@ Each player gets their own HeySir. Days are counted on the Overworld clock, so s
 - `/heysir summon` makes him appear and follow you right away.
 - `/heysir reset` makes him forget you.
 
-## Playing it in the Minecraft Launcher
+## Install
 
-1. Run the [Fabric installer](https://fabricmc.net/use/installer/): pick **Client**, Minecraft **26.3**, Loader **0.19.5**.
-2. In the Minecraft Launcher, open **Installations**, edit the new `fabric-loader-0.19.5-26.3` installation, and set **Game directory** to a new folder such as `~/Library/Application Support/minecraft-heysir`. Your normal `mods` folder holds NeoForge 1.21.1 mods, and they would crash a Fabric profile.
-3. Put these in that folder's `mods` directory:
-   - [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3 (0.162.0+26.3 or newer)
-   - `build/libs/heysir-1.0.0.jar` from this project
-4. Launch that installation.
+HeySir needs **Minecraft Java 26.2** and **NeoForge 26.2** (this build was made with NeoForge 26.2.0.89). It does not load on the NeoForge 1.21.1 profile that already has your other mods.
+
+1. Download the NeoForge installer for Minecraft 26.2 from [neoforged.net](https://neoforged.net/) and run it. Choose **Client**.
+2. In the Minecraft Launcher, open **Installations**, edit the new NeoForge 26.2 installation, and set **Game directory** to a new folder such as `~/Library/Application Support/minecraft-heysir`. That keeps this profile away from the 1.21.1 mods folder, which would crash 26.2.
+3. Get the mod jar:
+   - Download `heysir-1.0.0.jar` from the [GitHub releases](https://github.com/rileycleavenger/heysir-mod/releases) page, or
+   - Clone this repo and run `./gradlew build`. The jar is `build/libs/heysir-1.0.0.jar`. Building needs Java 25 (`brew install openjdk@25` on macOS).
+4. Put `heysir-1.0.0.jar` in that game directory's `mods` folder. NeoForge does not need a separate API jar.
+5. Launch the NeoForge 26.2 installation.
+
+In game, craft a McDonalds Giftcard with 8 gold ingots around a cooked beef, or use `/heysir summon` if cheats are on.
 
 ## Development
 
@@ -36,7 +41,8 @@ Needs Java 25. `gradle.properties` points Gradle at Homebrew's `openjdk@25` (`br
 
 - `./gradlew runClient` launches a dev copy of the game with the mod.
 - `./gradlew build` produces the jar in `build/libs/`.
-- `./gradlew runClientGameTest` runs the end-to-end test in [src/gametest](src/gametest). It covers following, the giftcard, the 3-day return, deaths doubling his health, the Nether, and relogging, and it saves screenshots to `build/run/clientGameTest/screenshots/`.
+- `./gradlew runGameTestServer` runs the gameplay tests in [src/gametest](src/gametest).
+- `./gradlew runScreenshotClient` opens a flat world, poses HeySir, and saves screenshots under `run/screenshots/`.
 
 ### Art and voices
 

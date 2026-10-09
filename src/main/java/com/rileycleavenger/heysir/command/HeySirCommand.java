@@ -5,19 +5,20 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.rileycleavenger.heysir.director.HeySirData;
 import com.rileycleavenger.heysir.director.HeySirDirector;
 import com.rileycleavenger.heysir.entity.HeySirEntity;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 /** Operator-only helpers for testing: /heysir status|summon|reset. */
 public final class HeySirCommand {
 	private HeySirCommand() {
 	}
 
-	public static void initialize() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> register(dispatcher));
+	public static void register() {
+		NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> register(event.getDispatcher()));
 	}
 
 	private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {

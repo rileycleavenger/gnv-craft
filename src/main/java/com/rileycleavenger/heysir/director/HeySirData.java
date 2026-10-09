@@ -1,6 +1,7 @@
 package com.rileycleavenger.heysir.director;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.StringRepresentable;
 
@@ -10,7 +11,7 @@ import net.minecraft.util.StringRepresentable;
 public record HeySirData(Phase phase, int deaths, long returnAt) {
 	public static final HeySirData DEFAULT = new HeySirData(Phase.UNMET, 0, 0L);
 
-	public static final Codec<HeySirData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final MapCodec<HeySirData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Phase.CODEC.fieldOf("phase").forGetter(HeySirData::phase),
 		Codec.INT.fieldOf("deaths").forGetter(HeySirData::deaths),
 		Codec.LONG.fieldOf("return_at").forGetter(HeySirData::returnAt)

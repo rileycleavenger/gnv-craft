@@ -43,7 +43,8 @@ public class BikeLayer extends RenderLayer<HeySirRenderState, HeySirModel> {
 			LivingEntityRenderer.getOverlayCoords(state, 0.0F),
 			-1,
 			null,
-			state.outlineColor
+			state.outlineColor,
+			null
 		);
 		poseStack.popPose();
 	}

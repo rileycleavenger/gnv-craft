@@ -1,28 +1,29 @@
 package com.rileycleavenger.heysir;
 
+import com.mojang.logging.LogUtils;
 import com.rileycleavenger.heysir.command.HeySirCommand;
 import com.rileycleavenger.heysir.director.HeySirDirector;
 import com.rileycleavenger.heysir.registry.ModAttachments;
 import com.rileycleavenger.heysir.registry.ModEntities;
 import com.rileycleavenger.heysir.registry.ModItems;
 import com.rileycleavenger.heysir.registry.ModSounds;
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HeySirMod implements ModInitializer {
+@Mod(HeySirMod.MOD_ID)
+public class HeySirMod {
 	public static final String MOD_ID = "heysir";
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LogUtils.getLogger();
 
-	@Override
-	public void onInitialize() {
-		ModSounds.initialize();
-		ModEntities.initialize();
-		ModItems.initialize();
-		ModAttachments.initialize();
-		HeySirDirector.initialize();
-		HeySirCommand.initialize();
+	public HeySirMod(IEventBus modBus) {
+		ModSounds.register(modBus);
+		ModEntities.register(modBus);
+		ModItems.register(modBus);
+		ModAttachments.register(modBus);
+		HeySirDirector.register();
+		HeySirCommand.register();
 	}
 
 	public static Identifier id(String path) {
