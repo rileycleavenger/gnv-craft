@@ -38,3 +38,5 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+tools/osm/raw.json
+tools/osm/tiles/

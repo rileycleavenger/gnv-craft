@@ -1,7 +1,11 @@
 package com.rileycleavenger.gnvcraft.registry;
 
 import com.rileycleavenger.gnvcraft.GnvCraftMod;
+import com.rileycleavenger.gnvcraft.drunk.DrinkItem;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SpawnEggItem;
@@ -16,10 +20,19 @@ public final class ModItems {
 	public static final DeferredItem<Item> MCDONALDS_GIFTCARD = ITEMS.registerItem(
 		"mcdonalds_giftcard", Item::new, properties -> properties.rarity(Rarity.UNCOMMON)
 	);
+	public static final DeferredItem<DrinkItem> BEER = drink("beer", 1.0F);
+	public static final DeferredItem<DrinkItem> SHOT = drink("shot", 1.5F);
+	public static final DeferredItem<DrinkItem> COCKTAIL = drink("cocktail", 2.0F);
 	// Entity types register before items, so HEYSIR is available here.
 	public static final DeferredItem<SpawnEggItem> HEYSIR_SPAWN_EGG = ITEMS.registerItem(
 		"heysir_spawn_egg", SpawnEggItem::new, properties -> properties.spawnEgg(ModEntities.HEYSIR.get())
 	);
+
+	private static DeferredItem<DrinkItem> drink(String name, float amount) {
+		return ITEMS.registerItem(name, p -> new DrinkItem(p, amount), properties -> properties
+			.stacksTo(16)
+			.component(DataComponents.CONSUMABLE, Consumable.builder().animation(ItemUseAnimation.DRINK).consumeSeconds(1.6F).build()));
+	}
 
 	private ModItems() {
 	}
@@ -32,6 +45,9 @@ public final class ModItems {
 	private static void onBuildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
 		if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
 			event.accept(MCDONALDS_GIFTCARD);
+			event.accept(BEER);
+			event.accept(SHOT);
+			event.accept(COCKTAIL);
 		} else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(HEYSIR_SPAWN_EGG);
 		}

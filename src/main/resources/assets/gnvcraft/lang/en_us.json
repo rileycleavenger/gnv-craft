@@ -4,5 +4,12 @@
   "item.heysir.heysir_spawn_egg": "HeySir Spawn Egg",
   "subtitles.heysir.hey_sir": "HeySir: Hey Sir",
   "subtitles.heysir.hey_sir_excuse_me": "HeySir: Hey Sir, Excuse Me",
-  "subtitles.heysir.wife_and_kids": "HeySir: I have a wife and kids"
+  "subtitles.heysir.wife_and_kids": "HeySir: I have a wife and kids",
+  "generator.gnvcraft.gainesville": "GNV-Craft: Gainesville",
+  "entity.gnvcraft.dennis": "Dennis",
+  "item.gnvcraft.beer": "Beer",
+  "item.gnvcraft.shot": "Shot",
+  "item.gnvcraft.cocktail": "Cocktail",
+  "death.attack.alcohol_poisoning": "%1$s drank too much in Gainesville",
+  "death.attack.alcohol_poisoning.player": "%1$s drank too much in Gainesville"
 }

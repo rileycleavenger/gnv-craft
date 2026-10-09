@@ -1,6 +1,7 @@
 package com.rileycleavenger.gnvcraft.registry;
 
 import com.rileycleavenger.gnvcraft.GnvCraftMod;
+import com.rileycleavenger.gnvcraft.entity.DennisEntity;
 import com.rileycleavenger.gnvcraft.entity.HeySirEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -24,6 +25,13 @@ public final class ModEntities {
 			.noSave()
 	);
 
+	public static final DeferredHolder<EntityType<?>, EntityType<DennisEntity>> DENNIS = ENTITY_TYPES.registerEntityType(
+		"dennis",
+		DennisEntity::new,
+		MobCategory.MISC,
+		builder -> builder.sized(0.6F, 1.8F).eyeHeight(1.62F).clientTrackingRange(10)
+	);
+
 	private ModEntities() {
 	}
 
@@ -34,5 +42,6 @@ public final class ModEntities {
 
 	private static void onAttributeCreation(EntityAttributeCreationEvent event) {
 		event.put(HEYSIR.get(), HeySirEntity.createAttributes().build());
+		event.put(DENNIS.get(), DennisEntity.createAttributes().build());
 	}
 }

@@ -1,0 +1,16 @@
+tile (29.63, -82.372, 29.6395, -82.354) 717
+retry (29.63, -82.354, 29.6395, -82.336) https://overpass-api.de/api/interpreter HTTP Error 504: Gateway Timeout
+retry (29.63, -82.354, 29.6395, -82.336) https://overpass.kumi.systems/api/interpreter HTTP Error 500: Internal Server Error
+retry (29.63, -82.354, 29.6395, -82.336) https://maps.mail.ru/osm/tools/overpass/api/interpreter HTTP Error 504: Gateway Time-out
+tile (29.63, -82.354, 29.6395, -82.336) 728
+tile (29.63, -82.336, 29.6395, -82.318) 524
+tile (29.63, -82.318, 29.6395, -82.3) 385
+retry (29.6395, -82.372, 29.649, -82.354) https://overpass-api.de/api/interpreter HTTP Error 504: Gateway Timeout
+retry (29.6395, -82.372, 29.649, -82.354) https://overpass.kumi.systems/api/interpreter HTTP Error 500: Internal Server Error
+tile (29.6395, -82.372, 29.649, -82.354) 514
+retry (29.6395, -82.354, 29.649, -82.336) https://overpass-api.de/api/interpreter HTTP Error 504: Gateway Timeout
+retry (29.6395, -82.354, 29.649, -82.336) https://overpass.kumi.systems/api/interpreter HTTP Error 500: Internal Server Error
+retry (29.6395, -82.354, 29.649, -82.336) https://maps.mail.ru/osm/tools/overpass/api/interpreter HTTP Error 504: Gateway Time-out
+tile (29.6395, -82.354, 29.649, -82.336) 823
+retry (29.6395, -82.336, 29.649, -82.318) https://overpass-api.de/api/interpreter HTTP Error 504: Gateway Timeout
+retry (29.6395, -82.336, 29.649, -82.318) https://overpass.kumi.systems/api/interpreter HTTP Error 500: Internal Server Error
