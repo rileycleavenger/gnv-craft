@@ -1,0 +1,24 @@
+{
+  "entity.heysir.hey_sir": {
+    "subtitle": "subtitles.heysir.hey_sir",
+    "sounds": [
+      { "name": "heysir:hey_sir_1", "attenuation_distance": 24 },
+      { "name": "heysir:hey_sir_2", "attenuation_distance": 24 },
+      { "name": "heysir:hey_sir_3", "attenuation_distance": 24 },
+      { "name": "heysir:hey_sir_4", "attenuation_distance": 24 }
+    ]
+  },
+  "entity.heysir.hey_sir_excuse_me": {
+    "subtitle": "subtitles.heysir.hey_sir_excuse_me",
+    "sounds": [
+      { "name": "heysir:hey_sir_excuse_me_1", "attenuation_distance": 24 },
+      { "name": "heysir:hey_sir_excuse_me_2", "attenuation_distance": 24 }
+    ]
+  },
+  "entity.heysir.wife_and_kids": {
+    "subtitle": "subtitles.heysir.wife_and_kids",
+    "sounds": [
+      { "name": "heysir:wife_and_kids", "attenuation_distance": 24 }
+    ]
+  }
+}
