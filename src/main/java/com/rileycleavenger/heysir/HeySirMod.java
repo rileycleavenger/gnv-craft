@@ -1,5 +1,11 @@
 package com.rileycleavenger.heysir;
 
+import com.rileycleavenger.heysir.command.HeySirCommand;
+import com.rileycleavenger.heysir.director.HeySirDirector;
+import com.rileycleavenger.heysir.registry.ModAttachments;
+import com.rileycleavenger.heysir.registry.ModEntities;
+import com.rileycleavenger.heysir.registry.ModItems;
+import com.rileycleavenger.heysir.registry.ModSounds;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
@@ -11,7 +17,12 @@ public class HeySirMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		LOGGER.info("Hey Sir");
+		ModSounds.initialize();
+		ModEntities.initialize();
+		ModItems.initialize();
+		ModAttachments.initialize();
+		HeySirDirector.initialize();
+		HeySirCommand.initialize();
 	}
 
 	public static Identifier id(String path) {
