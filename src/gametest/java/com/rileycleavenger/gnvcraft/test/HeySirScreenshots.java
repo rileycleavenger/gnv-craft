@@ -139,15 +139,39 @@ public class HeySirScreenshots {
 			double cz = (b.minZ + b.maxZ) / 2.0;
 			// cameras on the open street: 13th St for the Standard, NW 3rd Ave for the Hub
 			int[] cam = name.startsWith("The Standard") ? openSpot(22, -40) : openSpot((int) cx - 20, -200);
+			double ex = name.startsWith("The Standard") ? 45 : cam[0] + 0.5;
+			double ez = name.startsWith("The Standard") ? 25 : cam[1] + 0.5;
+			double ey = name.startsWith("The Standard") ? b.baseY + 22 : y(cam[0], cam[1]) + 1.5;
 			this.shots.add(new Shot(id + "-exterior", 140, false, p -> {
 				noHeySir(p);
-				placeLooking(p, cam[0] + 0.5, y(cam[0], cam[1]) + 1.5, cam[1] + 0.5, cx, (b.baseY + b.topY) / 2.0, cz);
+				placeLooking(p, ex, ey, ez, cx, (b.baseY + b.topY) / 2.0, cz);
 			}));
 			this.shots.add(new Shot(id + "-roof", 80, false, p -> placeLooking(p, b.minX + 3, b.topY + 6, b.minZ + 3, cx, b.topY - 4, cz)));
 			double[] c = corridor(b, 3);
 			if (c != null) {
 				this.shots.add(new Shot(id + "-corridor", 60, false, p -> placeLooking(p, c[0], c[1], c[2], c[3], c[4], c[5])));
 			}
+		}
+		// landmarks across the V1 area, each from the nearest open street
+		String[][] landmarks = {{"stadium", "Ben Hill Griffin"}, {"century-tower", "Century Tower"}, {"library-west", "Library West"},
+			{"reitz-union", "Reitz Union"}, {"courthouse", "Alachua County Courthouse"}, {"shands", "Shands Hospital"},
+			{"airport-terminal", "Gainesville Regional Airport"}};
+		for (String[] lm : landmarks) {
+			GnvRaster.Building b = named(lm[1]);
+			if (b == null) {
+				continue;
+			}
+			double cx = (b.minX + b.maxX) / 2.0;
+			double cz = (b.minZ + b.maxZ) / 2.0;
+			int span = Math.max(b.maxX - b.minX, b.maxZ - b.minZ);
+			// elevated three-quarter view from the south-east, above the tree canopy
+			double camX = cx + span * 0.55 + 25;
+			double camZ = cz + span * 0.55 + 25;
+			double camY = b.topY + 12 + span * 0.15;
+			this.shots.add(new Shot(lm[0], 160, false, p -> {
+				noHeySir(p);
+				placeLooking(p, camX, camY, camZ, cx, (b.baseY * 2 + b.topY) / 3.0, cz);
+			}));
 		}
 		for (InteriorSpecs.Spec spec : InteriorSpecs.all()) {
 			int gy = spec.groundY() + 1;
@@ -193,7 +217,7 @@ public class HeySirScreenshots {
 		var park = PlaneDirector.parking();
 		this.shots.add(new Shot("airport-plane", 220, false, p -> {
 			GameDayDirector.force(false);
-			placeLooking(p, park.getX() + 22, park.getY() + 4, park.getZ() + 14, park.getX(), park.getY() + 1, park.getZ());
+			placeLooking(p, park.getX() + 28, park.getY() + 18, park.getZ() + 20, park.getX(), park.getY() + 1, park.getZ());
 		}));
 	}
 

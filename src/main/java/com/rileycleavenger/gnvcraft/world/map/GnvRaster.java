@@ -50,6 +50,8 @@ public final class GnvRaster {
 		public int bandEvery;
 		public @Nullable String plinth;
 		public @Nullable String rail;
+		/** Horizontal trim at every floor line (stone courses on UF's brick buildings). */
+		public @Nullable String trim;
 	}
 
 	public static final class Door {
@@ -78,7 +80,6 @@ public final class GnvRaster {
 	private static final Region MISSING = new Region();
 	private static final Map<Long, Region> REGIONS = new ConcurrentHashMap<>();
 	private static @Nullable Table table;
-	private static int minX, minZ, maxX, maxZ;
 
 	private GnvRaster() {
 	}
@@ -92,28 +93,24 @@ public final class GnvRaster {
 					table.size = 0;
 				} else {
 					table = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), Table.class);
-					GnvCraftMod.LOGGER.info("Loaded LiDAR core: {} buildings, {}x{} blocks", table.buildings.size(), table.size, table.size);
+					GnvCraftMod.LOGGER.info("Loaded LiDAR map: {} buildings", table.buildings.size());
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException("Couldn't read the LiDAR building table", e);
 			}
-			minX = table.x0;
-			minZ = table.z0;
-			maxX = table.x0 + table.size - 1;
-			maxZ = table.z0 + table.size - 1;
 		}
 		return table;
 	}
 
-	/** Whether the block column is inside the LiDAR core. */
+	/** Whether the block column is inside the LiDAR-baked area (a region file exists for it). */
 	public static boolean covers(int x, int z) {
-		Table t = table();
-		return t.size > 0 && x >= minX && x <= maxX && z >= minZ && z <= maxZ;
+		table();
+		return region(x, z) != MISSING;
 	}
 
-	/** Whether the whole 16x16 chunk is inside the LiDAR core. */
+	/** Whether the 16x16 chunk is inside the LiDAR-baked area (regions are 256-aligned, so a chunk is fully in or out). */
 	public static boolean coversChunk(int x0, int z0) {
-		return covers(x0, z0) && covers(x0 + 15, z0 + 15);
+		return covers(x0, z0);
 	}
 
 	private static Region region(int x, int z) {

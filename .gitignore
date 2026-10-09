@@ -46,3 +46,4 @@ tools/.venv/
 tools/.mapillary_token
 tools/.map_tiles_api_token
 __pycache__/
+tools/gainesville_sv/

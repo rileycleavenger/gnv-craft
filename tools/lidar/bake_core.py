@@ -332,6 +332,28 @@ def levels_of(t):
     return 0
 
 
+OVERTURE_PATH = CACHE / ("overture_area.geojson" if (CACHE / "overture_area.geojson").exists() else "overture_buildings.geojson")
+_OVERTURE = None
+
+
+def overture_features():
+    """Non-OSM Overture building outlines (OSM ones come from OSM itself), projected once and cached."""
+    global _OVERTURE
+    if _OVERTURE is None:
+        _OVERTURE = []
+        if OVERTURE_PATH.exists():
+            from shapely.ops import transform as stx
+            for f in json.loads(OVERTURE_PATH.read_text())["features"]:
+                pr = f["properties"]
+                if pr["sources"][0]["dataset"] == "OpenStreetMap":
+                    continue
+                g = shape(f["geometry"])
+                if g.geom_type == "MultiPolygon":
+                    g = max(g.geoms, key=lambda q: q.area)
+                _OVERTURE.append((stx(proj_xy, g), pr, f.get("id") or pr.get("id")))
+    return _OVERTURE
+
+
 def build_buildings(osm, ground, bld, surface):
     # LiDAR building mask
     mask = ~np.isnan(bld)
@@ -359,19 +381,12 @@ def build_buildings(osm, ground, bld, surface):
             if p is not None and not p.is_empty:
                 vec.append(dict(poly=p, name=t.get("name"), kind=kind_of(t), levels=levels_of(t), height=None, src="osm", id=el["id"],
                                 addr=(t.get("addr:housenumber", "") + " " + t.get("addr:street", "")).strip()))
-    ov_path = CACHE / "overture_buildings.geojson"
-    if ov_path.exists():
-        for f in json.loads(ov_path.read_text())["features"]:
-            pr = f["properties"]
-            if pr["sources"][0]["dataset"] == "OpenStreetMap":
-                continue
-            g = shape(f["geometry"])
-            if g.geom_type == "MultiPolygon":
-                g = max(g.geoms, key=lambda q: q.area)
-            from shapely.ops import transform as stx
-            p = stx(proj_xy, g)
-            vec.append(dict(poly=p, name=(pr.get("names") or {}).get("primary"), kind=pr.get("class") or "yes",
-                            levels=pr.get("num_floors") or 0, height=pr.get("height"), src="overture", id=f.get("id") or pr.get("id"), addr=""))
+    for p, pr, fid in overture_features():
+        minx, minz, maxx, maxz = p.bounds
+        if maxx < X0 or minx > X0 + SIZE or maxz < Z0 or minz > Z0 + SIZE:
+            continue
+        vec.append(dict(poly=p, name=(pr.get("names") or {}).get("primary"), kind=pr.get("class") or "yes",
+                        levels=pr.get("num_floors") or 0, height=pr.get("height"), src="overture", id=fid, addr=""))
     vid = np.zeros((SIZE, SIZE), np.int32)
     rasterize_polys([(v["poly"], idx + 1) for idx, v in enumerate(vec)], lambda q: q, vid)
 

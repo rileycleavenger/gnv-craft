@@ -45,14 +45,40 @@ def fetch(box, depth=0):
     return out
 
 
-els, seen = [], set()
-ds, dw = (N - S) / 3, (E - W) / 3
-for i in range(3):
-    for j in range(3):
-        box = (round(S + i * ds, 5), round(W + j * dw, 5), round(S + (i + 1) * ds, 5), round(W + (j + 1) * dw, 5))
-        for el in fetch(box):
-            k = (el["type"], el["id"])
-            if k not in seen:
-                seen.add(k); els.append(el)
-OUT.write_text(json.dumps({"elements": els}))
-print("wrote", len(els), "elements")
+def tile_box(x0, z0, size):
+    """lat/lon box (s, w, n, e) of a block-coordinate square, padded 30 m."""
+    from pyproj import Transformer
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from area import E0, N0
+    to_ll = Transformer.from_crs("EPSG:32617", "EPSG:4326", always_xy=True)
+    lon0, lat0 = to_ll.transform(E0 + x0 - 30, N0 - (z0 + size + 30))
+    lon1, lat1 = to_ll.transform(E0 + x0 + size + 30, N0 - (z0 - 30))
+    return (round(lat0, 5), round(lon0, 5), round(lat1, 5), round(lon1, 5))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "area":
+        # every V1 tile, one cached file per tile: cache/osm/t_<tx>_<tz>.json
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from area import tiles, TILE
+        (OUT.parent / "osm").mkdir(parents=True, exist_ok=True)
+        for tx, tz, x0, z0 in tiles():
+            dest = OUT.parent / "osm" / f"t_{tx}_{tz}.json"
+            if dest.exists():
+                continue
+            dest.write_text(json.dumps(fetch(tile_box(x0, z0, TILE))))
+            print("tile", tx, tz, flush=True)
+        print("ALL_OSM_DONE", flush=True)
+        sys.exit(0)
+    els, seen = [], set()
+
+    ds, dw = (N - S) / 3, (E - W) / 3
+    for i in range(3):
+        for j in range(3):
+            box = (round(S + i * ds, 5), round(W + j * dw, 5), round(S + (i + 1) * ds, 5), round(W + (j + 1) * dw, 5))
+            for el in fetch(box):
+                k = (el["type"], el["id"])
+                if k not in seen:
+                    seen.add(k); els.append(el)
+    OUT.write_text(json.dumps({"elements": els}))
+    print("wrote", len(els), "elements")

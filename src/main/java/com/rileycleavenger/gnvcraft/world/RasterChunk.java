@@ -59,7 +59,16 @@ final class RasterChunk {
 	private static BlockState facade(GnvRaster.Building info, int x, int y, int z, int floor) {
 		GnvRaster.Facade f = info.facade;
 		if (f == null) {
+			// UF's collegiate buildings: red-orange brick with tan stone courses at each floor line (seen in street photos)
+			String k = info.kind == null ? "" : info.kind;
+			boolean campus = k.equals("university") || k.equals("college") || k.equals("library");
+			if (campus && Math.floorMod(y - info.baseY, Math.max(3, info.floorH)) == 0) {
+				return b("minecraft:smooth_sandstone");
+			}
 			return wall(info);
+		}
+		if (f.trim != null && Math.floorMod(y - info.baseY, Math.max(3, info.floorH)) == 0) {
+			return b(f.trim);
 		}
 		if (f.plinth != null && y == info.baseY + 1) {
 			return b(f.plinth);
@@ -161,7 +170,12 @@ final class RasterChunk {
 			return;
 		}
 		int bot = Math.max(g + 2, GnvRaster.leafBot(x, z));
-		if (GnvRaster.trunk(x, z) && !paved(s) || GnvRaster.trunk(x, z) && s == GnvRaster.S_CONCRETE) {
+		// light poles, antennas and wires are unclassified in this LiDAR too: only real crowns (surrounded by canopy) become trees
+		int support = canopySupport(x, z);
+		if (support < 3) {
+			return;
+		}
+		if (GnvRaster.trunk(x, z) && support >= 7 && (!paved(s) || s == GnvRaster.S_CONCRETE)) {
 			for (int y = g + 1; y < top; y++) {
 				out.set(x, y, z, b("minecraft:oak_log"));
 			}
@@ -234,6 +248,18 @@ final class RasterChunk {
 		} else if ((cm == 4 || cm == 13) && mm >= 1 && mm <= 3) {
 			out.set(x, y, z, b("minecraft:gray_wool"));                    // couch
 		}
+	}
+
+	private static int canopySupport(int x, int z) {
+		int n = 0;
+		for (int dx = -1; dx <= 1; dx++) {
+			for (int dz = -1; dz <= 1; dz++) {
+				if ((dx != 0 || dz != 0) && GnvRaster.covers(x + dx, z + dz) && GnvRaster.leafTop(x + dx, z + dz) > 0) {
+					n++;
+				}
+			}
+		}
+		return n;
 	}
 
 	private static boolean hasLeaf(int x, int y, int z) {
