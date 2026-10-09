@@ -22,6 +22,25 @@ loom {
 	}
 }
 
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "heysir-test"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
+// On macOS, a vsynced window that's covered by other apps can block forever on buffer swap.
+def gameTestOptions = layout.buildDirectory.file("run/clientGameTest/options.txt").get().asFile
+tasks.named("runClientGameTest") {
+	doFirst {
+		gameTestOptions.parentFile.mkdirs()
+		gameTestOptions.text = "enableVsync:false\nmaxFps:60\n"
+	}
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
