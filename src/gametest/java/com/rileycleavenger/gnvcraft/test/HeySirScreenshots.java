@@ -162,10 +162,12 @@ public class HeySirScreenshots {
 		if (swamp != null) {
 			double fx = swamp.fieldX;
 			double fz = swamp.fieldZ;
-			this.shots.add(new Shot("stadium-aerial", 220, false, p -> placeLooking(p, fx - 150, swamp.baseY + 110, fz + 170, fx + 10, swamp.baseY + 10, fz - 10)));
+			this.shots.add(new Shot("stadium-aerial", 240, false, p -> placeLooking(p, fx - 40, swamp.baseY + 120, fz + 230, fx + 5, swamp.baseY + 5, fz - 15)));
 			this.shots.add(new Shot("stadium-from-press-box", 120, false, p -> placeLooking(p, fx - 75, swamp.baseY + 42, fz, fx + 20, swamp.baseY, fz)));
 			this.shots.add(new Shot("stadium-field", 100, false, p -> placeLooking(p, fx, swamp.baseY + 2, fz + 40, fx, swamp.baseY + 8, fz - 60)));
 		}
+		this.shots.add(new Shot("century-tower-street", 140, false, p -> placeLooking(p, -393 + 0.5, y(-393, 335) + 1.6, 335, -393 + 0.5, y(-393, 360) + 30, 360)));
+		this.shots.add(new Shot("century-tower-top", 100, false, p -> placeLooking(p, -375, y(-393, 360) + 52, 340, -392.5, y(-393, 360) + 40, 360.5)));
 		// landmarks across the V1 area, each from the nearest open street
 		String[][] landmarks = {{"stadium", "Ben Hill Griffin"}, {"century-tower", "Century Tower"}, {"library-west", "Library West"},
 			{"reitz-union", "Reitz Union"}, {"courthouse", "Alachua County Courthouse"}, {"shands", "Shands Hospital"},

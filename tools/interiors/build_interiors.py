@@ -605,9 +605,65 @@ def corner_13th_university():
     b.save()
 
 
+# ---------------------------------------------------------------- Century Tower
+def century_tower():
+    """Century Tower (1953), from the user's photos on the LiDAR footprint (7 x 7 m, x -396..-390, z 357..363, 46 m).
+    Red-brick shaft with recessed vertical lines near each corner; white cast-stone band; belfry with louvers and two tall arched
+    openings per face; white Gothic crown with corner pinnacles, crenellations and mid-face finials. Bells inside, stair up."""
+    S, H_SHAFT, H_BAND, H_BELL, H_CROWN = 7, 33, 34, 42, 46
+    b = B("century_tower", "Century Tower", "University of Florida, Gainesville, FL 32611",
+          "From photos on the LiDAR footprint and height (46 m to the pinnacles).", (-397, 356), (S + 2, H_CROWN + 4, S + 2))
+    o = 1
+    BRICK, LINE, STONE = "minecraft:bricks", "minecraft:red_terracotta", "minecraft:smooth_quartz"
+    def ring(y0, y1, blk):
+        b.fill(o, y0, o, o + S - 1, y1, o, blk); b.fill(o, y0, o + S - 1, o + S - 1, y1, o + S - 1, blk)
+        b.fill(o, y0, o, o, y1, o + S - 1, blk); b.fill(o + S - 1, y0, o, o + S - 1, y1, o + S - 1, blk)
+    b.fill(o, 0, o, o + S - 1, 0, o + S - 1, "minecraft:polished_andesite")
+    ring(1, H_SHAFT, BRICK)
+    for k in (1, S - 2):                                  # recessed lines near each corner, all four faces
+        b.fill(o + k, 2, o, o + k, H_SHAFT - 1, o, LINE); b.fill(o + k, 2, o + S - 1, o + k, H_SHAFT - 1, o + S - 1, LINE)
+        b.fill(o, 2, o + k, o, H_SHAFT - 1, o + k, LINE); b.fill(o + S - 1, 2, o + k, o + S - 1, H_SHAFT - 1, o + k, LINE)
+    ring(H_SHAFT + 1, H_BAND, STONE)                      # cast-stone band
+    b.fill(o - 1, H_BAND, o - 1, o + S, H_BAND, o + S, "minecraft:smooth_quartz_slab[type=bottom]")
+    ring(H_BAND + 1, H_BELL, BRICK)                       # belfry
+    for y in range(H_BAND + 1, H_BELL + 1):
+        for k in (2, 4):
+            blk = "minecraft:air" if y >= H_BAND + 4 else "minecraft:white_stained_glass_pane"   # louvers below, open arches above
+            if y == H_BELL:
+                blk = STONE                               # arch heads
+            b.set(o + k, y, o, blk); b.set(o + k, y, o + S - 1, blk); b.set(o, y, o + k, blk); b.set(o + S - 1, y, o + k, blk)
+    for k in (1, 3, 5):                                   # white trim framing the arches (the belfry itself is brick)
+        b.set(o + k, H_BELL - 1, o, STONE); b.set(o + k, H_BELL - 1, o + S - 1, STONE)
+        b.set(o, H_BELL - 1, o + k, STONE); b.set(o + S - 1, H_BELL - 1, o + k, STONE)
+    ring(H_BELL + 1, H_BELL + 1, STONE)                   # crown
+    for k in range(S):
+        if k % 2 == 0:
+            for (xx, zz) in ((o + k, o), (o + k, o + S - 1), (o, o + k), (o + S - 1, o + k)):
+                b.set(xx, H_BELL + 2, zz, "minecraft:quartz_pillar")
+    for c0 in (o, o + S - 1):                             # corner pinnacles
+        for c1 in (o, o + S - 1):
+            b.fill(c0, H_BELL + 2, c1, c0, H_CROWN, c1, "minecraft:quartz_pillar")
+            b.set(c0, H_CROWN + 1, c1, "minecraft:end_rod[facing=up]")
+    for (xx, zz) in ((o + 3, o), (o + 3, o + S - 1), (o, o + 3), (o + S - 1, o + 3)):   # mid-face finials
+        b.fill(xx, H_BELL + 2, zz, xx, H_BELL + 3, zz, "minecraft:quartz_pillar"); b.set(xx, H_BELL + 4, zz, "minecraft:end_rod[facing=up]")
+    b.fill(o + 1, H_BELL + 1, o + 1, o + S - 2, H_BELL + 1, o + S - 2, "minecraft:smooth_stone")   # roof of the bell chamber
+    # inside: stair up, bells
+    b.fill(o + 1, 1, o + 1, o + S - 2, H_BELL, o + S - 2, "minecraft:air")
+    b.fill(o + 1, 1, o + 1, o + 1, H_BAND + 1, o + 1, "minecraft:scaffolding[distance=0,bottom=false]")
+    b.fill(o + 1, H_BAND + 1, o + 1, o + S - 2, H_BAND + 1, o + S - 2, "minecraft:smooth_stone")
+    b.set(o + 1, H_BAND + 1, o + 1, "minecraft:scaffolding[distance=0,bottom=false]")
+    for (xx, zz) in ((o + 3, o + 3), (o + 2, o + 4), (o + 4, o + 2)):
+        b.set(xx, H_BELL - 1, zz, "minecraft:bell[attachment=ceiling,facing=north]")
+    # entrance (north face) with a white stone surround
+    b.fill(o + 2, 1, o, o + 4, 4, o, STONE)
+    b.set(o + 3, 1, o, "minecraft:dark_oak_door[facing=north,half=lower,hinge=left,open=false]")
+    b.set(o + 3, 2, o, "minecraft:dark_oak_door[facing=north,half=upper,hinge=left,open=false]")
+    b.save()
+
+
 if __name__ == "__main__":
     # The Standard and the Hub are now built on their real LiDAR / Overture footprints by the generator (see bake_core overrides).
     for old in ("the_standard", "the_hub_3rd_ave"):
         (OUT / (old + ".json")).unlink(missing_ok=True)
-    house(); hub(); corner_13th_university()
-    (OUT / "index.json").write_text(json.dumps({"specs": ["house_201_nw_10th", "hub_gainesville", "corner_13th_university"]}))
+    house(); hub(); corner_13th_university(); century_tower()
+    (OUT / "index.json").write_text(json.dumps({"specs": ["house_201_nw_10th", "hub_gainesville", "corner_13th_university", "century_tower"]}))

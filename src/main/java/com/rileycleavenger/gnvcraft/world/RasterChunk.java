@@ -149,9 +149,12 @@ final class RasterChunk {
 		}
 		if (bi > 0 && !spec) {
 			GnvRaster.Building info = GnvRaster.info(bi);
-			if (info != null && "stadium".equals(info.kind) && (info.fieldX != 0 || info.fieldZ != 0)
-				&& !(GnvRaster.roof(x, z) - info.baseY > 36 && x < info.fieldX - 40)) {
-				stadium(info, bi, x, z, g, out);
+			if (info != null && "stadium".equals(info.kind) && (info.fieldX != 0 || info.fieldZ != 0)) {
+				if (GnvRaster.roof(x, z) - info.baseY > 30 && x < info.fieldX - 45) {
+					pressBox(info, bi, x, z, g, out);
+				} else {
+					stadium(info, bi, x, z, g, out);
+				}
 				return;
 			}
 			if (info != null) {
@@ -330,7 +333,46 @@ final class RasterChunk {
 				out.set(x, y, z, b("minecraft:light_gray_concrete"));
 			}
 		}
-		out.set(x, top, z, low ? b("minecraft:orange_concrete") : seat);
+		if (low || edge) {
+			out.set(x, top, z, low ? b("minecraft:orange_concrete") : seat);
+			return;
+		}
+		// seat rows: a stair step facing the field where the row is higher than the one in front of it
+		double dx = info.fieldX - x;
+		double dz = info.fieldZ - z;
+		int fx = Math.abs(dx) >= Math.abs(dz) ? (int) Math.signum(dx) : 0;
+		int fz = fx == 0 ? (int) Math.signum(dz) : 0;
+		boolean stepDown = sameBuilding(bi, x + fx, z + fz) && GnvRaster.roof(x + fx, z + fz) < top;
+		String back = fx > 0 ? "west" : fx < 0 ? "east" : fz > 0 ? "north" : "south";
+		String id = photo != null ? photo : "minecraft:light_gray_concrete";
+		String stair = switch (id) {
+			case "minecraft:blue_concrete" -> "minecraft:dark_prismarine_stairs";
+			case "minecraft:orange_concrete" -> "minecraft:cut_copper_stairs";
+			case "minecraft:white_concrete" -> "minecraft:quartz_stairs";
+			case "minecraft:light_gray_concrete" -> "minecraft:smooth_quartz_stairs";
+			default -> null;
+		};
+		out.set(x, top, z, stepDown && stair != null && !id.equals("minecraft:blue_concrete") ? b(stair + "[facing=" + back + ",half=bottom]") : seat);
+	}
+
+	/** The west-side press box (Steve Spurrier-Florida Field): green-tinted glass in bands between white concrete floor lines. */
+	private static void pressBox(GnvRaster.Building info, int bi, int x, int z, int g, Sink out) {
+		int base = info.baseY;
+		int top = GnvRaster.roof(x, z);
+		boolean edge = !sameBuilding(bi, x - 1, z) || !sameBuilding(bi, x + 1, z) || !sameBuilding(bi, x, z - 1) || !sameBuilding(bi, x, z + 1)
+			|| GnvRaster.roof(x - 1, z) < top - 6 || GnvRaster.roof(x + 1, z) < top - 6;
+		out.set(x, base, z, b("minecraft:smooth_stone"));
+		for (int y = base + 1; y < top; y++) {
+			int fy = y - base;
+			if (fy < 18) {
+				out.set(x, y, z, edge ? b("minecraft:light_gray_concrete") : b("minecraft:air"));
+			} else if (edge) {
+				out.set(x, y, z, fy % 4 == 0 ? b("minecraft:white_concrete") : b("minecraft:green_stained_glass"));
+			} else if (fy % 4 == 0) {
+				out.set(x, y, z, b("minecraft:smooth_stone"));
+			}
+		}
+		out.set(x, top, z, b("minecraft:white_concrete"));
 	}
 
 	private static boolean sameBuilding(int bi, int x, int z) {

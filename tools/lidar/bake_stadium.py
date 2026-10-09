@@ -127,12 +127,10 @@ def main():
     rect = pitch.minimum_rotated_rectangle
     pts = np.array(rect.exterior.coords)[:4]
     edges = [pts[(i + 1) % 4] - pts[i] for i in range(4)]
-    long_e = max(edges, key=lambda e: np.hypot(*e))
-    u = long_e / np.hypot(*long_e)              # along the field
-    if u[1] < 0:
-        u = -u                                  # +u points south
-    n = np.array([-u[1], u[0]])
-    c = np.array(rect.centroid.coords[0])
+    # the real field is 0.9 degrees off grid north; snapping it to the block grid keeps every line straight (ends move < 1 m)
+    u = np.array([0.0, 1.0])                    # along the field, +u points south
+    n = np.array([-1.0, 0.0])
+    c = np.round(np.array(rect.centroid.coords[0])) + 0.5
     along = (xs - c[0]) * u[0] + (zs - c[1]) * u[1]
     across = (xs - c[0]) * n[0] + (zs - c[1]) * n[1]
     L, Wd = 120 * YARD, 160 / 3 * YARD          # 120 yards x 53 1/3 yards
@@ -185,16 +183,30 @@ def main():
                           fieldX=float(c[0]), fieldZ=float(c[1]),
                           facade=dict(base="minecraft:bricks", baseFloors=3, upper="minecraft:light_gray_concrete", band="minecraft:orange_concrete", bandEvery=0))
 
-    # seat colours from the aerial photo
-    pcol = np.array([c2 for _, c2 in STADIUM_PALETTE], np.int32)
-    sm = np.stack([ndimage.uniform_filter(naip[..., k].astype(np.float32), 3) for k in range(3)], -1)
-    d = ((sm[:, :, None, :] - pcol[None, None]) ** 2).sum(-1)
-    pick = np.argmin(d, -1)
-    col = np.array([base_idx[blk] for blk, _ in STADIUM_PALETTE], np.uint8)[pick]
-    col[wall] = base_idx["minecraft:orange_concrete"]
-    # orange rim along the top edge of the bowl (seen in every photo)
+    # seat colours by section, from the photos and the seating chart:
+    #   west sideline (under the press box): blue seats with orange aisles; east sideline and both end zones: striped aluminium
+    #   bleachers with orange vomitory hoods; the north end's middle tier (Touchdown Terrace) has the orange/red band; orange rim
+    #   along every top edge; the Gator Vision boards at both ends are white.
+    I = lambda blk: base_idx[blk]
+    dx, dz = xs - c[0], zs - c[1]
+    end = np.abs(dz) / (L / 2) > np.abs(dx) / (Wd / 2)
+    west = ~end & (dx < 0)
+    north = end & (dz < 0)
+    h = roof - base
+    hmax_n = np.percentile(h[bowl & north], 95) if (bowl & north).any() else 30
+    lateral = np.where(end, xs, zs).astype(int)
+    col = np.where(h % 2 == 0, I("minecraft:white_concrete"), I("minecraft:light_gray_concrete")).astype(np.uint8)
+    col[west] = I("minecraft:blue_concrete")
+    col[west & (np.mod(lateral, 13) == 0)] = I("minecraft:orange_concrete")                      # aisles
+    band = north & (h > hmax_n * 0.42) & (h < hmax_n * 0.58)
+    col[band] = I("minecraft:orange_concrete")
+    hoods = ~west & (np.mod(lateral, 14) < 2) & (np.mod(h, 9) == 4)
+    col[hoods] = I("minecraft:orange_concrete")
+    boards = end & (h > 32)
+    col[boards] = I("minecraft:white_concrete")
+    col[wall] = I("minecraft:orange_concrete")
     rim = bowl & ~ndimage.binary_erosion(bowl, iterations=2) & (roof > base + 12)
-    col[rim] = base_idx["minecraft:orange_concrete"]
+    col[rim] = I("minecraft:orange_concrete")
     g.a["c"][cells] = col[cells]
     g.a["c"][in_stadium & ~cells] = 0
 
@@ -225,6 +237,18 @@ def main():
                     s[k, i] = S_BLUE
                 elif outline[row, colm]:
                     s[k, i] = S_ORANGE
+    # yard numbers (10 20 30 40 50 40 30 20 10), 9 yards in from each sideline, tops toward the sideline
+    for yd in range(20, 101, 10):
+        num = str(min(yd - 10, 110 - yd))
+        m = text_mask(num, 6, 4)                   # 6 along the field x 4 across
+        for side in (-1, 1):
+            cx_ = Wd / 2 - 9 * YARD
+            sel = field & (np.abs(a_yd - yd) <= 3.2) & (np.abs(across - side * cx_) <= 2)
+            for k, i in zip(*np.where(sel)):
+                r_ = int(round((across[k, i] - side * cx_) * side + 1.5))      # 0..3, top of the digits toward the sideline
+                c_ = int(round((a_yd[k, i] - yd) * YARD * side + 2.5))
+                if 0 <= r_ < 4 and 0 <= c_ < 6 and m[3 - r_, c_]:
+                    s[k, i] = bc.SURFACE["lane_white"]
     # midfield logo straight from the aerial photo (orange / blue / green / white)
     logo = field & (np.abs(a_yd - 60) < 7) & (np.abs(across) < 7)
     lc = naip.astype(np.int32)

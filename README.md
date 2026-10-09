@@ -11,13 +11,13 @@ A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable re
 | ![The Standard over 13th St & University Ave](docs/screenshots/the-standard-exterior.jpg) | ![Dennis on the corner of 13th & University](docs/screenshots/dennis.jpg) |
 | The Standard over 13th & University (LiDAR footprint and height, facade from street photos) | Dennis dancing on the 13th & University corner |
 | ![Ben Hill Griffin Stadium from the press box](docs/screenshots/stadium-from-press-box.jpg) | ![On the field at the Swamp](docs/screenshots/stadium-field.jpg) |
-| Ben Hill Griffin Stadium: every seat row at its LiDAR height, seat colours from the aerial photo, regulation field with GATORS / FLORIDA end zones | On the field: yard lines, goalposts, the orange wall |
+| Ben Hill Griffin Stadium: every seat row at its LiDAR height; blue west stands, aluminium bleachers with orange hoods, the orange rim; regulation field with yard numbers and GATORS / FLORIDA end zones | On the field: the press box, the north end's orange band, goalposts, the orange wall |
 | ![Hub Gainesville at 13th & 3rd](docs/screenshots/hub-corner.jpg) | ![The Hub's rooftop pool deck](docs/screenshots/hub-pool-deck.jpg) |
 | Hub Gainesville: orange brick, dark metal top, the corner tower at 13th & 3rd, balcony stacks | The Hub's 3rd Ave facade segments, courtyards and rooftop pool deck with the muraled clubhouse |
 | ![Chick-fil-A corner](docs/screenshots/chick-fil-a-corner.jpg) | ![The Hub and Publix](docs/screenshots/hub-and-publix.jpg) |
 | The NW corner of 13th & University: The Standard over the Chick-fil-A, palms, pavers, bollards | Publix across NW 3rd Ave from the Hub |
-| ![Century Tower](docs/screenshots/century-tower.jpg) | ![Library West](docs/screenshots/library-west.jpg) |
-| Century Tower: brick with stone courses, real height from the laser scan | Library West and the Plaza of the Americas |
+| ![Century Tower](docs/screenshots/century-tower-top.jpg) | ![Library West](docs/screenshots/library-west.jpg) |
+| Century Tower, built from photos at its measured 46 m: brick shaft, stone band, belfry, Gothic crown | Library West and the Plaza of the Americas |
 | ![UF Health Shands](docs/screenshots/shands.jpg) | ![Alachua County Courthouse](docs/screenshots/courthouse.jpg) |
 | UF Health Shands | Downtown: Alachua County Courthouse |
 | ![Game day on University Ave](docs/screenshots/game-day.jpg) | ![Gainesville Regional Airport](docs/screenshots/airport-terminal.jpg) |
