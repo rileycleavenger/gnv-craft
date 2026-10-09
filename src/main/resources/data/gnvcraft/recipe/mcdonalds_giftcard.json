@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": "minecraft:gold_ingot",
+    "X": "minecraft:cooked_beef"
+  },
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "result": {
+    "id": "gnvcraft:mcdonalds_giftcard"
+  }
+}

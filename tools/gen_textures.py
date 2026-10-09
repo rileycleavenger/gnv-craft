@@ -3,7 +3,7 @@
 
     python3 tools/gen_textures.py
 
-Outputs (under src/main/resources/assets/heysir/):
+Outputs (under src/main/resources/assets/gnvcraft/):
   textures/entity/heysir.png        64x64 classic player skin
   textures/entity/heysir_bike.png   bike atlas; UV regions must match BikeModel.java
   textures/item/mcdonalds_giftcard.png
@@ -20,7 +20,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "src/main/resources/assets/heysir"
+ASSETS = ROOT / "src/main/resources/assets/gnvcraft"
 VANILLA_EGG = Path("/tmp/mcres/assets/minecraft/textures/item/zombie_spawn_egg.png")
 
 rng = random.Random(1234)

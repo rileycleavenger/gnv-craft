@@ -1,6 +1,6 @@
-# HeySir
+# GNV-Craft
 
-A NeoForge mod for Minecraft Java 26.2. A man in a red shirt and old jeans rides around on a red bike with the seat removed, follows you, and keeps saying "Hey Sir" until you give him a McDonalds Giftcard.
+A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable release). It adds HeySir: a man in a red shirt and old jeans rides around on a red bike with the seat removed, follows you, and keeps saying "Hey Sir" until you give him a McDonalds Giftcard.
 
 ![HeySir riding](docs/heysir-riding.png)
 
@@ -23,14 +23,14 @@ Each player gets their own HeySir. Days are counted on the Overworld clock, so s
 
 ## Install
 
-HeySir needs **Minecraft Java 26.2** and **NeoForge 26.2** (this build was made with NeoForge 26.2.0.89). It does not load on the NeoForge 1.21.1 profile that already has your other mods.
+GNV-Craft needs **Minecraft Java 26.2** and **NeoForge 26.2.0.89** or newer in the 26.2 line. It does not load on older Minecraft or NeoForge versions such as 1.21.1.
 
 1. Download the NeoForge installer for Minecraft 26.2 from [neoforged.net](https://neoforged.net/) and run it. Choose **Client**.
-2. In the Minecraft Launcher, open **Installations**, edit the new NeoForge 26.2 installation, and set **Game directory** to a new folder such as `~/Library/Application Support/minecraft-heysir`. That keeps this profile away from the 1.21.1 mods folder, which would crash 26.2.
+2. In the Minecraft Launcher, open **Installations**, edit the new NeoForge 26.2 installation, and set **Game directory** to a new folder such as `~/Library/Application Support/minecraft-gnvcraft`. That keeps this profile away from the mods folder of older versions, which would crash 26.2.
 3. Get the mod jar:
-   - Download `heysir-1.0.0.jar` from the [GitHub releases](https://github.com/rileycleavenger/heysir-mod/releases) page, or
-   - Clone this repo and run `./gradlew build`. The jar is `build/libs/heysir-1.0.0.jar`. Building needs Java 25 (`brew install openjdk@25` on macOS).
-4. Put `heysir-1.0.0.jar` in that game directory's `mods` folder. NeoForge does not need a separate API jar.
+   - Download `gnvcraft-1.0.0.jar` from the [GitHub releases](https://github.com/rileycleavenger/gnv-craft/releases) page, or
+   - Clone this repo and build it: `git clone https://github.com/rileycleavenger/gnv-craft.git && cd gnv-craft && ./gradlew build`. The jar is `build/libs/gnvcraft-1.0.0.jar`. Building needs Java 25 (`brew install openjdk@25` on macOS).
+4. Put `gnvcraft-1.0.0.jar` in that game directory's `mods` folder (create it if missing). NeoForge does not need a separate API jar.
 5. Launch the NeoForge 26.2 installation.
 
 In game, craft a McDonalds Giftcard with 8 gold ingots around a cooked beef, or use `/heysir summon` if cheats are on.
@@ -47,10 +47,10 @@ Needs Java 25. `gradle.properties` points Gradle at Homebrew's `openjdk@25` (`br
 ### Art and voices
 
 - `python3 tools/gen_textures.py` regenerates the skin, bike, item icons and mod icon (needs Pillow). `heysir.png` is a standard 64x64 player skin, so you can drop in any classic-arm skin instead.
-- `tools/gen_voices.sh` regenerates the placeholder voice lines with macOS text-to-speech. To use real recordings, convert them to **mono** OGG and keep the same names in `src/main/resources/assets/heysir/sounds/`:
+- `tools/gen_voices.sh` regenerates the placeholder voice lines with macOS text-to-speech. To use real recordings, convert them to **mono** OGG and keep the same names in `src/main/resources/assets/gnvcraft/sounds/`:
 
   ```sh
-  ffmpeg -i recording.m4a -ac 1 -ar 44100 -c:a libvorbis -q:a 5 src/main/resources/assets/heysir/sounds/hey_sir_1.ogg
+  ffmpeg -i recording.m4a -ac 1 -ar 44100 -c:a libvorbis -q:a 5 src/main/resources/assets/gnvcraft/sounds/hey_sir_1.ogg
   ```
 
-  Variants are listed in `src/main/resources/assets/heysir/sounds.json`, so you can add or remove files there.
+  Variants are listed in `src/main/resources/assets/gnvcraft/sounds.json`, so you can add or remove files there.

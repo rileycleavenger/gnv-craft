@@ -5,11 +5,11 @@
 #
 # Minecraft needs mono OGG Vorbis for sounds to fade with distance. To use real recordings
 # instead, convert them with:
-#   ffmpeg -i recording.m4a -ac 1 -ar 44100 -c:a libvorbis -q:a 5 src/main/resources/assets/heysir/sounds/hey_sir_1.ogg
+#   ffmpeg -i recording.m4a -ac 1 -ar 44100 -c:a libvorbis -q:a 5 src/main/resources/assets/gnvcraft/sounds/hey_sir_1.ogg
 # keeping the file names below (or update sounds.json).
 set -euo pipefail
 
-OUT="$(cd "$(dirname "$0")/.." && pwd)/src/main/resources/assets/heysir/sounds"
+OUT="$(cd "$(dirname "$0")/.." && pwd)/src/main/resources/assets/gnvcraft/sounds"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$OUT"

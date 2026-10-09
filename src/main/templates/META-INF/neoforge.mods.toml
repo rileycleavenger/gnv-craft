@@ -7,9 +7,9 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="Riley Cleavenger"
-logoFile="assets/heysir/icon.png"
+logoFile="assets/gnvcraft/icon.png"
 description='''
-A man on a seatless red bike follows you around saying "Hey Sir" until you give him a McDonalds Giftcard.
+GNV-Craft adds HeySir: a man on a seatless red bike follows you around saying "Hey Sir" until you give him a McDonalds Giftcard.
 '''
 
 [[dependencies.${mod_id}]]

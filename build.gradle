@@ -52,7 +52,7 @@ neoForge {
             client()
             sourceSet = sourceSets.gametest
             gameDirectory = project.file('run/screenshots')
-            systemProperty 'heysir.screenshotTest', 'true'
+            systemProperty 'gnvcraft.screenshotTest', 'true'
         }
 
         configureEach {

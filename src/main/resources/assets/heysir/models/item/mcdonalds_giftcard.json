@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "heysir:item/mcdonalds_giftcard"
-  }
-}
