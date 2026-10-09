@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -56,6 +57,12 @@ public class HeySirEntity extends PathfinderMob {
 	private int leaveTicks;
 	private float damageScale = 1.0F;
 	private boolean deathHandled;
+
+	// Client-side only: wheel and pedal crank angles in radians, driven by distance travelled.
+	public float wheelSpin;
+	public float prevWheelSpin;
+	public float crankAngle;
+	public float prevCrankAngle;
 
 	public HeySirEntity(EntityType<? extends HeySirEntity> type, Level level) {
 		super(type, level);
@@ -163,6 +170,31 @@ public class HeySirEntity extends PathfinderMob {
 		if (this.level() instanceof ServerLevel serverLevel && this.isAlive()) {
 			this.tickBike();
 			this.tickMode(serverLevel);
+		} else if (this.level().isClientSide()) {
+			this.tickWheels();
+		}
+	}
+
+	private void tickWheels() {
+		this.prevWheelSpin = this.wheelSpin;
+		this.prevCrankAngle = this.crankAngle;
+		if (this.wheelSpin > Mth.TWO_PI) {
+			this.wheelSpin -= Mth.TWO_PI;
+			this.prevWheelSpin -= Mth.TWO_PI;
+		}
+		if (this.crankAngle > Mth.TWO_PI) {
+			this.crankAngle -= Mth.TWO_PI;
+			this.prevCrankAngle -= Mth.TWO_PI;
+		}
+		float travelled = (float) Math.sqrt(Mth.square(this.getX() - this.xo) + Mth.square(this.getZ() - this.zo));
+		if (travelled > 2.0F) {
+			return;
+		}
+		// 16 px per block, 6 px wheel radius; the crank turns at half the wheel speed.
+		float spin = travelled * 16.0F / 6.0F;
+		this.wheelSpin += spin;
+		if (this.isRiding()) {
+			this.crankAngle += spin * 0.5F;
 		}
 	}
 
