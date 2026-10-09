@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "heysir",
+	"version": "${version}",
+	"name": "HeySir",
+	"description": "A man on a seatless red bike follows you around saying \"Hey Sir\" until you give him a McDonalds Giftcard.",
+	"authors": [
+		"Riley Cleavenger"
+	],
+	"license": "CC0-1.0",
+	"icon": "assets/heysir/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.rileycleavenger.heysir.HeySirMod"
+		],
+		"client": [
+			"com.rileycleavenger.heysir.client.HeySirClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
