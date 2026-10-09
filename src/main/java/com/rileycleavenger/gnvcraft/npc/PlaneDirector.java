@@ -29,21 +29,16 @@ public final class PlaneDirector {
 		});
 	}
 
-	/** Where the plane is parked: the airport terminal/aerodrome landmark, offset onto the apron. */
+	/** Where the plane is parked: the GNV apron closest to the terminal. */
 	public static BlockPos parking() {
 		GnvMap map = GnvMap.get();
-		GnvMap.Landmark l = map.landmark("gainesville regional");
-		if (l == null) {
-			for (GnvMap.Landmark c : map.landmarks) {
-				if ("aerodrome".equals(c.kind) || "terminal".equals(c.kind)) {
-					l = c;
-					break;
-				}
-			}
-		}
-		int x = l == null ? 600 : l.p[0];
-		int z = l == null ? -600 : l.p[1];
-		return new BlockPos(x, GnvChunkGenerator.SURFACE_Y + 1, z + 12);
+		GnvMap.Landmark terminal = map.landmarkKind("airport_terminal");
+		int tx = terminal == null ? 0 : terminal.p[0];
+		int tz = terminal == null ? 0 : terminal.p[1];
+		GnvMap.Landmark apron = map.nearestKind("airport_apron", tx, tz);
+		int x = apron == null ? tx : apron.p[0];
+		int z = apron == null ? tz : apron.p[1];
+		return new BlockPos(x, GnvChunkGenerator.SURFACE_Y + 1, z);
 	}
 
 	public static void onPlaneLost(ServerLevel level) {

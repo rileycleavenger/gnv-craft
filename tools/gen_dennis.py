@@ -114,3 +114,12 @@ def plane():
     fill(im, 0, 82, 20, 14, (40, 40, 44), 3)           # landing gear
     im.save(ASSETS / "textures/entity/plane.png")
 plane()
+
+def blocks():
+    out = ASSETS / "textures/block"; out.mkdir(parents=True, exist_ok=True)
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 255)); fill(im, 0, 0, 16, 16, (170, 172, 180), 5)
+    fill(im, 2, 2, 12, 12, (110, 112, 120), 4); fill(im, 7, 3, 2, 10, (30, 30, 34), 3)   # sliding doors
+    fill(im, 5, 1, 6, 1, (255, 220, 80), 0); im.save(out / "elevator.png")
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 255)); fill(im, 0, 0, 16, 16, (92, 58, 34), 5)
+    fill(im, 6, 2, 4, 8, (200, 170, 70), 4); fill(im, 7, 10, 2, 4, (200, 170, 70), 4); im.save(out / "bar_tap.png")
+blocks()

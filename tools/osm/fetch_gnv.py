@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "../.."))
 RAW = os.path.join(HERE, "raw.json")
 OUT = os.path.join(ROOT, "src/main/resources/data/gnvcraft/gnv_map/map.json.gz")
-ORIGIN = (29.6516, -82.3377)  # lat, lon of 13th St & University Ave (approx; refined below)
+ORIGIN = (29.6521, -82.3393)  # lat, lon of NW 13th St & W University Ave, read off the road data
 # Core bbox: UF campus, Midtown, downtown. Airport corridor handled as a separate small bbox.
 def _tiles():
     t = []
@@ -46,35 +46,49 @@ def query(b):
 );
 out geom;"""
 
-def fetch():
+def fetch_tile(b, depth=0):
+    """Fetch one bbox, splitting it into four quarters when the Overpass servers time out on it."""
     import time
+    data = urllib.parse.urlencode({"data": query(b)}).encode()
+    tile_file = os.path.join(HERE, "tiles", "%s_%s_%s_%s.json" % b)
+    os.makedirs(os.path.dirname(tile_file), exist_ok=True)
+    if os.path.exists(tile_file):
+        return json.load(open(tile_file))
+    for attempt in range(4):
+        srv = SERVERS[attempt % len(SERVERS)]
+        try:
+            req = urllib.request.Request(srv, data=data, headers={"User-Agent": "gnv-craft-mod/1.0 (github.com/rileycleavenger/gnv-craft)"})
+            got = json.load(urllib.request.urlopen(req, timeout=120))["elements"]
+            json.dump(got, open(tile_file, "w"))
+            print("tile", b, len(got), file=sys.stderr)
+            return got
+        except Exception as ex:
+            print("retry", b, srv, ex, file=sys.stderr)
+            time.sleep(5 + attempt * 5)
+    if depth >= 3:
+        sys.exit("tile failed: %s" % (b,))
+    s_, w, n, e = b
+    ms, mw = round((s_ + n) / 2, 5), round((w + e) / 2, 5)
+    print("splitting", b, file=sys.stderr)
+    out = []
+    for q in ((s_, w, ms, mw), (s_, mw, ms, e), (ms, w, n, mw), (ms, mw, n, e)):
+        out += fetch_tile(q, depth + 1)
+    json.dump(out, open(tile_file, "w"))
+    return out
+
+def fetch():
     if os.path.exists(RAW):
         return json.load(open(RAW))
     els, seen = [], set()
     for b in BBOXES:
-        data = urllib.parse.urlencode({"data": query(b)}).encode()
-        got = None
-        tile_file = os.path.join(HERE, "tiles", "%s_%s.json" % (b[0], b[1]))
-        os.makedirs(os.path.dirname(tile_file), exist_ok=True)
-        if os.path.exists(tile_file):
-            got = json.load(open(tile_file))
-        for attempt in range(0 if got is not None else 12):
-            srv = SERVERS[attempt % len(SERVERS)]
-            try:
-                req = urllib.request.Request(srv, data=data, headers={"User-Agent": "gnv-craft-mod/1.0 (github.com/rileycleavenger/gnv-craft)"})
-                got = json.load(urllib.request.urlopen(req, timeout=240))["elements"]
-                json.dump(got, open(tile_file, "w"))
-                break
-            except Exception as ex:
-                print("retry", b, srv, ex, file=sys.stderr)
-                time.sleep(10 + attempt * 10)
-        if got is None:
-            sys.exit("tile failed: %s" % (b,))
-        for e in got:
+        old = os.path.join(HERE, "tiles", "%s_%s.json" % (b[0], b[1]))
+        new_name = os.path.join(HERE, "tiles", "%s_%s_%s_%s.json" % b)
+        if os.path.exists(old) and not os.path.exists(new_name):
+            os.rename(old, new_name)
+        for e in fetch_tile(b):
             k = (e["type"], e["id"])
             if k not in seen:
                 seen.add(k); els.append(e)
-        print("tile", b, len(got), file=sys.stderr)
     json.dump({"elements": els}, open(RAW, "w"))
     return {"elements": els}
 
@@ -104,6 +118,14 @@ def main():
         geom = e.get("geometry")
         if not geom or len(geom) < 2:
             continue
+        if t.get("aeroway") in ("aerodrome", "terminal") and t.get("name"):
+            clat = sum(g["lat"] for g in geom) / len(geom)
+            clon = sum(g["lon"] for g in geom) / len(geom)
+            out["landmarks"].append({"id": e["id"], "name": t["name"], "kind": "airport_" + t["aeroway"], "p": project(clat, clon, o)})
+        if t.get("aeroway") == "apron":
+            clat = sum(g["lat"] for g in geom) / len(geom)
+            clon = sum(g["lon"] for g in geom) / len(geom)
+            out["landmarks"].append({"id": e["id"], "name": "GNV apron", "kind": "airport_apron", "p": project(clat, clon, o)})
         pts = [project(g["lat"], g["lon"], o) for g in geom]
         if "building" in t:
             levels = t.get("building:levels")

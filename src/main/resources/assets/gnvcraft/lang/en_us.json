@@ -16,5 +16,7 @@
   "entity.gnvcraft.fan": "Gator Fan",
   "gnvcraft.gameday.bar": "GAME DAY \u2014 Gators vs %s \u00b7 90,000 in town",
   "entity.gnvcraft.lime_scooter": "Lime Scooter",
-  "entity.gnvcraft.plane": "Cessna-style Plane"
+  "entity.gnvcraft.plane": "Cessna-style Plane",
+  "block.gnvcraft.elevator": "Elevator",
+  "block.gnvcraft.bar_tap": "Bar Tap"
 }

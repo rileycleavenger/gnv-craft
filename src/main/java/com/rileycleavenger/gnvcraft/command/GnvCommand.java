@@ -43,7 +43,11 @@ public final class GnvCommand {
 		int x = 0;
 		int z = 0;
 		String key = place.trim().toLowerCase();
-		if (!key.equals("origin") && !key.equals("13th")) {
+		if (key.equals("airport")) {
+			net.minecraft.core.BlockPos park = com.rileycleavenger.gnvcraft.npc.PlaneDirector.parking();
+			x = park.getX() + 6;
+			z = park.getZ();
+		} else if (!key.equals("origin") && !key.equals("13th")) {
 			GnvMap.Landmark l = GnvMap.get().landmark(key);
 			if (l == null) {
 				source.sendFailure(Component.literal("No landmark matching '" + place + "'. Try: origin, chick-fil-a, a bar name, airport."));

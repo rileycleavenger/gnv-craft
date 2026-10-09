@@ -153,6 +153,31 @@ public final class GnvMap {
 		return null;
 	}
 
+	public @Nullable Landmark landmarkKind(String kind) {
+		for (Landmark l : this.landmarks) {
+			if (kind.equals(l.kind)) {
+				return l;
+			}
+		}
+		return null;
+	}
+
+	/** The apron landmark closest to the given block position. */
+	public @Nullable Landmark nearestKind(String kind, int x, int z) {
+		Landmark best = null;
+		long bestD = Long.MAX_VALUE;
+		for (Landmark l : this.landmarks) {
+			if (kind.equals(l.kind)) {
+				long d = (long) (l.p[0] - x) * (l.p[0] - x) + (long) (l.p[1] - z) * (l.p[1] - z);
+				if (d < bestD) {
+					bestD = d;
+					best = l;
+				}
+			}
+		}
+		return best;
+	}
+
 	public static synchronized GnvMap get() {
 		if (instance == null) {
 			try (InputStream in = GnvMap.class.getResourceAsStream("/data/gnvcraft/gnv_map/map.json.gz")) {

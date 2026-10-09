@@ -105,3 +105,8 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// Lets you type server commands (or pipe them in) when running ./gradlew runServer.
+tasks.matching { it.name == 'runServer' }.configureEach {
+    standardInput = System.in
+}

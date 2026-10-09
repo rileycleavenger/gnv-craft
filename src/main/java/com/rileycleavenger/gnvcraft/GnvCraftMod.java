@@ -10,6 +10,7 @@ import com.rileycleavenger.gnvcraft.npc.PlaneDirector;
 import com.rileycleavenger.gnvcraft.npc.ScooterPlacer;
 import com.rileycleavenger.gnvcraft.npc.SpecialNpcDirector;
 import com.rileycleavenger.gnvcraft.registry.ModAttachments;
+import com.rileycleavenger.gnvcraft.registry.ModBlocks;
 import com.rileycleavenger.gnvcraft.registry.ModEntities;
 import com.rileycleavenger.gnvcraft.registry.ModItems;
 import com.rileycleavenger.gnvcraft.registry.ModSounds;
@@ -28,6 +29,7 @@ public class GnvCraftMod {
 		ModSounds.register(modBus);
 		ModEntities.register(modBus);
 		ModItems.register(modBus);
+		ModBlocks.register(modBus);
 		ModAttachments.register(modBus);
 		ModWorldgen.register(modBus);
 		HeySirDirector.register();
