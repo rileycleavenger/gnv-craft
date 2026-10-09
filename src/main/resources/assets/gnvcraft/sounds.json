@@ -2,23 +2,73 @@
   "entity.heysir.hey_sir": {
     "subtitle": "subtitles.heysir.hey_sir",
     "sounds": [
-      { "name": "gnvcraft:hey_sir_1", "attenuation_distance": 24 },
-      { "name": "gnvcraft:hey_sir_2", "attenuation_distance": 24 },
-      { "name": "gnvcraft:hey_sir_3", "attenuation_distance": 24 },
-      { "name": "gnvcraft:hey_sir_4", "attenuation_distance": 24 }
+      {
+        "name": "gnvcraft:hey_sir_1",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "gnvcraft:hey_sir_2",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "gnvcraft:hey_sir_3",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "gnvcraft:hey_sir_4",
+        "attenuation_distance": 24
+      }
     ]
   },
   "entity.heysir.hey_sir_excuse_me": {
     "subtitle": "subtitles.heysir.hey_sir_excuse_me",
     "sounds": [
-      { "name": "gnvcraft:hey_sir_excuse_me_1", "attenuation_distance": 24 },
-      { "name": "gnvcraft:hey_sir_excuse_me_2", "attenuation_distance": 24 }
+      {
+        "name": "gnvcraft:hey_sir_excuse_me_1",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "gnvcraft:hey_sir_excuse_me_2",
+        "attenuation_distance": 24
+      }
     ]
   },
   "entity.heysir.wife_and_kids": {
     "subtitle": "subtitles.heysir.wife_and_kids",
     "sounds": [
-      { "name": "gnvcraft:wife_and_kids", "attenuation_distance": 24 }
+      {
+        "name": "gnvcraft:wife_and_kids",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "entity.gnvcraft.fan.go_gators": {
+    "subtitle": "subtitles.gnvcraft.fan.go_gators",
+    "sounds": [
+      {
+        "name": "gnvcraft:fan_go_gators_1",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "gnvcraft:fan_go_gators_2",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "gnvcraft:fan_go_gators_3",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "gnvcraft:fan_go_gators_4",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "gnvcraft:fan_go_gators_5",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "gnvcraft:fan_go_gators_6",
+        "attenuation_distance": 32
+      }
     ]
   }
 }

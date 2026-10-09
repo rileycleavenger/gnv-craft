@@ -71,3 +71,46 @@ def drinks():
     glass("shot", (150, 90, 40), None, "shot")
     glass("cocktail", (240, 90, 120), None, "cocktail")
 drinks()
+
+# --- Gator fan skins: 6 orange/blue outfit variants --------------------------------
+def fans():
+    ORANGE = (250, 70, 22); BLUE = (0, 33, 165); WHITE = (245, 245, 245)
+    skins = [(190, 140, 110), (238, 200, 172), (120, 80, 56), (222, 170, 130), (90, 58, 40), (246, 214, 190)]
+    hairs = [(40, 30, 24), (120, 80, 40), (20, 20, 20), (210, 170, 90), (90, 40, 20), (60, 60, 64)]
+    combos = [(ORANGE, BLUE), (BLUE, ORANGE), (ORANGE, WHITE), (BLUE, WHITE), (ORANGE, ORANGE), (BLUE, BLUE)]
+    for i in range(6):
+        sk, hr = skins[i], hairs[i]; top, bottom = combos[i]
+        im = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+        for x in (0, 8, 16, 24): fill(im, x, 8, 8, 8, sk, 4)
+        fill(im, 8, 0, 8, 8, hr, 5); fill(im, 16, 0, 8, 8, sk, 4)
+        fill(im, 0, 8, 8, 3, hr, 5); fill(im, 8, 8, 8, 2, hr, 5); fill(im, 16, 8, 8, 3, hr, 5); fill(im, 24, 8, 8, 8, hr, 5)
+        im.putpixel((10, 12), (30, 30, 30, 255)); im.putpixel((13, 12), (30, 30, 30, 255))
+        box(im, 16, 16, 8, 12, 4, lambda x, y, w, h: fill(im, x, y, w, h, top, 5)); fill(im, 20, 16, 8, 4, top); fill(im, 28, 16, 8, 4, top)
+        for (u, v) in ((40, 16), (32, 48)):
+            box(im, u, v, 4, 12, 4, lambda x, y, w, h: (fill(im, x, y, w, h, sk, 4), fill(im, x, y, w, 4, top, 5)))
+            fill(im, u + 4, v, 4, 4, top); fill(im, u + 8, v, 4, 4, sk)
+        for (u, v) in ((0, 16), (16, 48)):
+            box(im, u, v, 4, 12, 4, lambda x, y, w, h: (fill(im, x, y, w, h, bottom, 5), fill(im, x, y + h - 2, w, 2, WHITE)))
+            fill(im, u + 4, v, 4, 4, bottom); fill(im, u + 8, v, 4, 4, bottom)
+        p = ASSETS / ("textures/entity/fan_%d.png" % (i + 1)); im.save(p)
+fans()
+
+def scooter():
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    fill(im, 0, 0, 32, 16, (120, 220, 20), 6)      # lime deck
+    fill(im, 0, 16, 14, 10, (40, 40, 44), 4)       # wheels
+    fill(im, 0, 26, 8, 6, (200, 200, 205), 4)      # stem
+    fill(im, 8, 26, 14, 6, (30, 30, 30), 4)        # handlebar
+    im.save(ASSETS / "textures/entity/lime_scooter.png")
+scooter()
+
+def plane():
+    im = Image.new("RGBA", (128, 96), (0, 0, 0, 0))
+    fill(im, 0, 0, 128, 40, (240, 240, 244), 4)        # fuselage, white
+    fill(im, 0, 40, 128, 14, (245, 245, 248), 3)       # wing
+    fill(im, 0, 54, 128, 16, (0, 33, 165), 4)          # gator blue tail pieces
+    fill(im, 0, 70, 30, 12, (250, 70, 22), 4)          # orange nose
+    fill(im, 30, 70, 20, 12, (30, 30, 34), 3)          # prop
+    fill(im, 0, 82, 20, 14, (40, 40, 44), 3)           # landing gear
+    im.save(ASSETS / "textures/entity/plane.png")
+plane()

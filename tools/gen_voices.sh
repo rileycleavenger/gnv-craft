@@ -31,3 +31,11 @@ line hey_sir_4 "Ralph" 175 "Hey, sir!"
 line hey_sir_excuse_me_1 "Reed (English (US))" 175 "Hey sir, excuse me!"
 line hey_sir_excuse_me_2 "Rocko (English (US))" 170 "Hey sir. Excuse me."
 line wife_and_kids "Reed (English (US))" 165 "I have a wife and kids."
+
+# Gator fans: exactly one line, "Go Gators!", in different voices (fan_go_gators_1..6).
+line fan_go_gators_1 "Reed (English (US))" 190 "Go Gators!"
+line fan_go_gators_2 "Rocko (English (US))" 185 "Go Gators!"
+line fan_go_gators_3 "Eddy (English (US))" 195 "Go Gators!"
+line fan_go_gators_4 "Flo (English (US))" 190 "Go Gators!"
+line fan_go_gators_5 "Fred" 185 "Go Gators!"
+line fan_go_gators_6 "Grandma (English (US))" 185 "Go Gators!"

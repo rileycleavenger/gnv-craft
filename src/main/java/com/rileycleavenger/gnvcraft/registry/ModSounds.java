@@ -14,6 +14,8 @@ public final class ModSounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> HEY_SIR_EXCUSE_ME = register("entity.heysir.hey_sir_excuse_me");
 	public static final DeferredHolder<SoundEvent, SoundEvent> WIFE_AND_KIDS = register("entity.heysir.wife_and_kids");
 
+	public static final DeferredHolder<SoundEvent, SoundEvent> GO_GATORS = register("entity.gnvcraft.fan.go_gators");
+
 	private ModSounds() {
 	}
 

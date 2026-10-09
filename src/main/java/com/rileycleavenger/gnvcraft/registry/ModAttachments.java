@@ -34,6 +34,18 @@ public final class ModAttachments {
 		() -> AttachmentType.builder(() -> 0.0F).serialize(Codec.FLOAT.fieldOf("level")).sync(ByteBufCodecs.FLOAT).build()
 	);
 
+	/** Overworld attachment: ids of scooter spots that already got their scooter. */
+	public static final Supplier<AttachmentType<java.util.List<Integer>>> SCOOTERS_PLACED = ATTACHMENT_TYPES.register(
+		"scooters_placed",
+		() -> AttachmentType.<java.util.List<Integer>>builder(() -> new java.util.ArrayList<>()).serialize(Codec.INT.listOf().fieldOf("ids")).build()
+	);
+
+	/** Overworld attachment: first in-game day the airport plane may (re)spawn. */
+	public static final Supplier<AttachmentType<Long>> PLANE_RESPAWN_DAY = ATTACHMENT_TYPES.register(
+		"plane_respawn_day",
+		() -> AttachmentType.builder(() -> 0L).serialize(Codec.LONG.fieldOf("day")).build()
+	);
+
 	private ModAttachments() {
 	}
 

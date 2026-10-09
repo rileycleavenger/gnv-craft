@@ -1,9 +1,13 @@
 package com.rileycleavenger.gnvcraft;
 
 import com.mojang.logging.LogUtils;
+import com.rileycleavenger.gnvcraft.command.GnvCommand;
 import com.rileycleavenger.gnvcraft.command.HeySirCommand;
 import com.rileycleavenger.gnvcraft.director.HeySirDirector;
 import com.rileycleavenger.gnvcraft.drunk.DrunkSystem;
+import com.rileycleavenger.gnvcraft.gameday.GameDayDirector;
+import com.rileycleavenger.gnvcraft.npc.PlaneDirector;
+import com.rileycleavenger.gnvcraft.npc.ScooterPlacer;
 import com.rileycleavenger.gnvcraft.npc.SpecialNpcDirector;
 import com.rileycleavenger.gnvcraft.registry.ModAttachments;
 import com.rileycleavenger.gnvcraft.registry.ModEntities;
@@ -29,7 +33,11 @@ public class GnvCraftMod {
 		HeySirDirector.register();
 		SpecialNpcDirector.register();
 		DrunkSystem.register();
+		ScooterPlacer.register();
+		PlaneDirector.register();
+		GameDayDirector.register();
 		HeySirCommand.register();
+		GnvCommand.register();
 	}
 
 	public static Identifier id(String path) {
