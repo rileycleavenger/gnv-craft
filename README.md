@@ -10,14 +10,18 @@ A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable re
 |---|---|
 | ![The Standard over 13th St & University Ave](docs/screenshots/the-standard-exterior.jpg) | ![Dennis on the corner of 13th & University](docs/screenshots/dennis.jpg) |
 | The Standard over 13th & University (LiDAR footprint and height, facade from street photos) | Dennis dancing on the 13th & University corner |
-| ![Century Tower](docs/screenshots/century-tower.jpg) | ![Ben Hill Griffin Stadium](docs/screenshots/stadium.jpg) |
-| Century Tower: brick with stone courses, real height from the laser scan | Around Ben Hill Griffin Stadium |
-| ![Library West](docs/screenshots/library-west.jpg) | ![UF Health Shands](docs/screenshots/shands.jpg) |
-| Library West and the Plaza of the Americas | UF Health Shands |
-| ![Alachua County Courthouse](docs/screenshots/courthouse.jpg) | ![Gainesville Regional Airport](docs/screenshots/airport-terminal.jpg) |
-| Downtown: Alachua County Courthouse | Gainesville Regional Airport |
-| ![Game day on University Ave](docs/screenshots/game-day.jpg) | ![Hub Gainesville on 3rd Ave](docs/screenshots/the-hub-exterior.jpg) |
-| Game day: Gator fans fill University Ave | Hub Gainesville (3rd Ave): brick base, white upper floors |
+| ![Ben Hill Griffin Stadium from the press box](docs/screenshots/stadium-from-press-box.jpg) | ![On the field at the Swamp](docs/screenshots/stadium-field.jpg) |
+| Ben Hill Griffin Stadium: every seat row at its LiDAR height, seat colours from the aerial photo, regulation field with GATORS / FLORIDA end zones | On the field: yard lines, goalposts, the orange wall |
+| ![Hub Gainesville at 13th & 3rd](docs/screenshots/hub-corner.jpg) | ![The Hub's rooftop pool deck](docs/screenshots/hub-pool-deck.jpg) |
+| Hub Gainesville: orange brick, dark metal top, the corner tower at 13th & 3rd, balcony stacks | The Hub's 3rd Ave facade segments, courtyards and rooftop pool deck with the muraled clubhouse |
+| ![Chick-fil-A corner](docs/screenshots/chick-fil-a-corner.jpg) | ![The Hub and Publix](docs/screenshots/hub-and-publix.jpg) |
+| The NW corner of 13th & University: The Standard over the Chick-fil-A, palms, pavers, bollards | Publix across NW 3rd Ave from the Hub |
+| ![Century Tower](docs/screenshots/century-tower.jpg) | ![Library West](docs/screenshots/library-west.jpg) |
+| Century Tower: brick with stone courses, real height from the laser scan | Library West and the Plaza of the Americas |
+| ![UF Health Shands](docs/screenshots/shands.jpg) | ![Alachua County Courthouse](docs/screenshots/courthouse.jpg) |
+| UF Health Shands | Downtown: Alachua County Courthouse |
+| ![Game day on University Ave](docs/screenshots/game-day.jpg) | ![Gainesville Regional Airport](docs/screenshots/airport-terminal.jpg) |
+| Game day: Gator fans fill University Ave | Gainesville Regional Airport |
 | ![201 NW 10th St](docs/screenshots/house-201-nw-10th-exterior.jpg) | ![Inside 201 NW 10th St](docs/screenshots/house-201-nw-10th-living.jpg) |
 | 201 NW 10th St, rebuilt from its listing photos | Living room through the granite pass-through |
 | ![The Standard's roof](docs/screenshots/the-standard-roof.jpg) | ![An apartment corridor](docs/screenshots/the-standard-corridor.jpg) |
@@ -31,6 +35,7 @@ A NeoForge mod for Minecraft Java 26.2 (NeoForge 26.2.0.89, the latest stable re
   - **The whole V1 area is built from a laser scan:** UF campus, Midtown, downtown, the Duckpond, Depot Park and the corridor up to GNV airport (39 km², outline in `tools/lidar/v1_area.json`, 13,820 buildings). USGS 3DEP LiDAR (2018, about 22 points per m²) gives the real terrain, every building's real footprint and roof height, and every tree's real position, height and crown. The 2023 NAIP aerial photo gives roof colours and finds the rooftop pools. OpenStreetMap and Overture Maps give names, building types, lane counts, lane markings, crosswalks and sidewalks, plus buildings finished after the 2018 scan (like Hub Gainesville). Street photos from Mapillary set the facades of the landmarks (The Standard, the Hub, Holiday Inn, Publix, Midtown, the O'Connell Center, the Courthouse, Headquarters Library, Shands and UF's brick-and-stone buildings).
   - **Outside the outline** the world is flat OpenStreetMap roads and footprints, easing down from the real terrain at the edge. GNV airport is about 7 km east and 4.5 km north of the origin (`/gnv tp airport`).
 - **Every building can be entered.** Doors face the nearest sidewalk. Each floor has rooms, lights, a scaffolding stair and an **elevator** pad (right-click to go up, sneak + right-click to go down). Apartment buildings get double-loaded corridors with units on both sides (kitchen, couch, bedroom), with a lobby on the ground floor. Bars get a counter, stools, a jukebox and a **bar tap**.
+- **Hand-built from photos:** Hub Gainesville on 3rd Ave (8 floors, each facade segment, balconies with doors from their units, courtyards, the rooftop pool deck and muraled clubhouse) and the NW corner of 13th & University (the Chick-fil-A under The Standard, palms, pavers, brick bollards). **Ben Hill Griffin Stadium** is built from the laser scan seat row by seat row, coloured from the aerial photo, with a regulation field (5-yard lines, GATORS / FLORIDA end zones, the midfield logo, goalposts, the orange wall) and the west press box.
 - **201 NW 10th St** is rebuilt by hand from its 37 listing photos on the footprint the LiDAR shows: yellow stucco, green doors, the carport, the brick driveway, the tile sunroom with the granite pass-through, the French doors, the white-tile kitchen, four bedrooms and three baths.
 - **Bars and drinking.** Click a bar tap for a beer (sneak-click for a shot). Beer adds 1 to your drunk level, shots 1.5, cocktails 2. Your view sways, rolls and narrows, sounds get lower and wobbly, the screen goes black near the top, and at level 9 you die of alcohol poisoning. The level drops by 1 every 2 in-game hours.
 - **Dennis** dances on the corner of 13th St & University by the Chick-fil-A: bald, very short pink shorts, cutoff green shirt. Walk by and he rambles about Linux.

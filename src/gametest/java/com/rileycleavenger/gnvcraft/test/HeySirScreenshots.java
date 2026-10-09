@@ -152,6 +152,20 @@ public class HeySirScreenshots {
 				this.shots.add(new Shot(id + "-corridor", 60, false, p -> placeLooking(p, c[0], c[1], c[2], c[3], c[4], c[5])));
 			}
 		}
+		// views matching the reference photos
+		this.shots.add(new Shot("hub-corner", 140, false, p -> { noHeySir(p); placeLooking(p, -14, y(-14, -196) + 3, -196, 70, y(70, -235) + 12, -240); }));
+		this.shots.add(new Shot("hub-from-13th", 120, false, p -> placeLooking(p, -45, y(-45, -200) + 26, -205, 40, y(40, -240) + 12, -245)));
+		this.shots.add(new Shot("hub-pool-deck", 100, false, p -> placeLooking(p, 75, y(75, -180) + 52, -182, 75, y(75, -215) + 26, -224)));
+		this.shots.add(new Shot("hub-and-publix", 120, false, p -> placeLooking(p, 110, y(110, -120) + 40, -110, 60, y(60, -200) + 8, -210)));
+		this.shots.add(new Shot("chick-fil-a-corner", 120, false, p -> placeLooking(p, 9, y(9, 9) + 0.2, 9, -14, y(-14, -14) + 4, -16)));
+		GnvRaster.Building swamp = named("Ben Hill Griffin");
+		if (swamp != null) {
+			double fx = swamp.fieldX;
+			double fz = swamp.fieldZ;
+			this.shots.add(new Shot("stadium-aerial", 220, false, p -> placeLooking(p, fx - 150, swamp.baseY + 110, fz + 170, fx + 10, swamp.baseY + 10, fz - 10)));
+			this.shots.add(new Shot("stadium-from-press-box", 120, false, p -> placeLooking(p, fx - 75, swamp.baseY + 42, fz, fx + 20, swamp.baseY, fz)));
+			this.shots.add(new Shot("stadium-field", 100, false, p -> placeLooking(p, fx, swamp.baseY + 2, fz + 40, fx, swamp.baseY + 8, fz - 60)));
+		}
 		// landmarks across the V1 area, each from the nearest open street
 		String[][] landmarks = {{"stadium", "Ben Hill Griffin"}, {"century-tower", "Century Tower"}, {"library-west", "Library West"},
 			{"reitz-union", "Reitz Union"}, {"courthouse", "Alachua County Courthouse"}, {"shands", "Shands Hospital"},

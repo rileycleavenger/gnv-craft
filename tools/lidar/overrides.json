@@ -4,7 +4,7 @@
   {
    "point": [
     -50,
-    -80
+    -40
    ],
    "name": "The Standard at Gainesville",
    "kind": "apartments",
@@ -13,12 +13,12 @@
    "facade": {
     "base": "minecraft:cut_sandstone",
     "baseFloors": 1,
-    "upper": "minecraft:bricks",
-    "band": "minecraft:smooth_sandstone",
+    "upper": "minecraft:smooth_sandstone",
+    "band": "minecraft:bricks",
     "bandEvery": 9,
-    "rail": "minecraft:black_concrete"
+    "rail": "minecraft:white_stained_glass_pane"
    },
-   "source": "Mapillary 2021: tan stone-veneer ground floor with cream recesses (Orangetheory Fitness), red brick and tan panels above, dark balcony rails"
+   "source": "Mapillary 2021 + corner photo: stone-veneer ground floor with the Chick-fil-A at the 13th & University corner, tan stucco and stone above with brick piers, white-railed corner balconies"
   },
   {
    "point": [
@@ -244,6 +244,36 @@
     "bandEvery": 16
    },
    "source": "LiDAR footprint and 58 m press box; red brick lower bowl, concrete upper deck, Gator blue accents"
+  },
+  {
+   "point": [
+    -60,
+    -120
+   ],
+   "name": "AC Hotel Gainesville Downtown",
+   "kind": "hotel",
+   "levels": 9,
+   "addr": "1201 W University Ave",
+   "facade": {
+    "base": "minecraft:smooth_sandstone",
+    "baseFloors": 1,
+    "upper": "minecraft:white_concrete",
+    "band": "minecraft:bricks",
+    "bandEvery": 10
+   },
+   "source": "Separate block north of The Standard across the NW 1st Ave passage (LiDAR gap z -87..-72); aerial photo: white roof with courtyard"
+  }
+ ],
+ "cuts": [
+  {
+   "rect": [
+    -112,
+    -86,
+    -4,
+    -72
+   ],
+   "surface": "concrete",
+   "why": "The Standard and the AC Hotel are separate blocks; the LiDAR clean-up bridged the 15 m gap between them"
   }
  ]
 }

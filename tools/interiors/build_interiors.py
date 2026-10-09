@@ -420,9 +420,194 @@ def house():
     b.save()
 
 
+# ---------------------------------------------------------------- Hub Gainesville (3rd Ave)
+def hub():
+    """Hub Gainesville, 1258 NW 3rd Ave (NE corner of NW 13th St & NW 3rd Ave), from the user's photos on the footprint the 2023
+    aerial photo shows (x 25..129, z -265..-209). 8 floors: arched ground-floor storefronts, a dark-gray metal corner tower at
+    13th & 3rd, and these facade segments.
+      South (NW 3rd Ave), west -> east: orange brick with a dark metal top, brown brick with pilasters and the "hub" entrance,
+      slate-blue metal, white over red brick, white over gray.
+      West (NW 13th St), south -> north: orange brick with a dark metal top, then white over red brick.
+    Black steel balconies in vertical stacks, each with a door from the unit behind it. On the roof: two courtyards, the pool deck
+    with pool, hot tub, turf, umbrellas and loungers, and the clubhouse with its orange-and-teal mural.
+    """
+    W, D = 105, 57                 # u: west -> east (x), v: north -> south (z)
+    GF, FH, FLOORS = 5, 3, 8       # ground floor 5 tall, upper floors 3 tall
+    TOP = GF + FH * (FLOORS - 1)   # roof slab Y (26)
+    b = B("hub_gainesville", "Hub Gainesville (3rd Ave)", "1258 NW 3rd Ave, Gainesville, FL 32601",
+          "From photos: 8 floors, segmented brick/metal facades, balconies, rooftop pool deck and courtyards on the real footprint.",
+          (24, -266), (W + 2, TOP + 8, D + 4))
+    ox, oz = 1, 1                  # building starts 1 block in (room for the corner tower and balconies to stick out)
+    def fl(u0, y0, v0, u1, y1, v1, blk): b.fill(ox + min(u0, u1), y0, oz + min(v0, v1), ox + max(u0, u1), y1, oz + max(v0, v1), blk)
+    def st(u, y, v, blk): b.set(ox + u, y, oz + v, blk)
+    def floor_y(f): return 0 if f == 1 else GF + FH * (f - 2)          # slab under floor f
+    COURTS = [(22, 17, 35, 38), (55, 18, 66, 39)]
+    ORANGE, DARK, BROWN, PIL, SLATE, WHITE, RED, GRAY = ("minecraft:terracotta", "minecraft:gray_concrete", "minecraft:brown_terracotta",
+        "minecraft:mud_bricks", "minecraft:light_blue_terracotta", "minecraft:white_concrete", "minecraft:bricks", "minecraft:light_gray_concrete")
+    # ---- massing: clear, slabs, roof
+    fl(0, 1, 0, W - 1, TOP + 6, D - 1, "minecraft:air")
+    fl(0, 0, 0, W - 1, 0, D - 1, "minecraft:polished_andesite")
+    for f in range(2, FLOORS + 1):
+        fl(0, floor_y(f), 0, W - 1, floor_y(f), D - 1, "minecraft:smooth_stone")
+    fl(0, TOP, 0, W - 1, TOP, D - 1, "minecraft:white_concrete")
+    for (u0, v0, u1, v1) in COURTS:                      # courtyards open from the podium (floor 2) up
+        fl(u0, GF + 1, v0, u1, TOP, v1, "minecraft:air")
+        fl(u0, GF, v0, u1, GF, v1, "minecraft:moss_block")
+        for (uu, vv) in ((u0 + 3, v0 + 4), (u1 - 3, v1 - 4)):
+            fl(uu, GF + 1, vv, uu, GF + 3, vv, "minecraft:oak_log"); fl(uu - 1, GF + 4, vv - 1, uu + 1, GF + 5, vv + 1, "minecraft:oak_leaves[persistent=true]")
+    # ---- facade material by position (u along south/north, v along west/east) and floor
+    def south_mat(u, f):
+        if u <= 20:  return DARK if f >= 7 else ORANGE
+        if u <= 38:  return PIL if u % 4 == 0 else BROWN
+        if u <= 54:  return SLATE
+        if u <= 74:  return WHITE if f >= 5 else RED
+        return WHITE if f >= 3 else GRAY
+    def west_mat(v, f):
+        if v <= 20:  return WHITE if f >= 3 else RED
+        return DARK if f >= 7 else ORANGE
+    def wall_run(side, n, mat_fn, balconies):
+        """side: 'S','N','W','E'; n: length; draws every floor of one facade with windows and balcony doors."""
+        def put(i, y, blk):
+            if side == "S": st(i, y, D - 1, blk)
+            elif side == "N": st(i, y, 0, blk)
+            elif side == "W": st(0, y, i, blk)
+            else: st(W - 1, y, i, blk)
+        for i in range(n):
+            # ground floor: arched storefronts (3 glass, 1 pier), arch course at the top
+            for y in range(1, GF + 1):
+                pier = i % 4 == 0
+                if y <= 3 and not pier:
+                    put(i, y, "minecraft:glass_pane")
+                elif y == 4 and not pier and i % 4 == 2:
+                    put(i, y, "minecraft:glass_pane")
+                else:
+                    put(i, y, mat_fn(i, 1))
+            for f in range(2, FLOORS + 1):
+                y0 = floor_y(f)
+                for dy in range(0, FH + (1 if f == FLOORS else 0)):
+                    y = y0 + dy
+                    win = dy in (1, 2) and i % 3 != 0
+                    put(i, y, "minecraft:glass_pane" if win else mat_fn(i, f))
+        for (i0, f0) in balconies:                       # balcony stacks: door in the wall, steel deck and railing outside
+            for f in range(f0, FLOORS + 1):
+                y0 = floor_y(f)
+                for i in range(i0, i0 + 3):
+                    if i == i0 + 1:
+                        put(i, y0 + 1, "minecraft:spruce_door[facing=%s,half=lower,hinge=left,open=false]" % {"S": "south", "N": "north", "W": "west", "E": "east"}[side])
+                        put(i, y0 + 2, "minecraft:spruce_door[facing=%s,half=upper,hinge=left,open=false]" % {"S": "south", "N": "north", "W": "west", "E": "east"}[side])
+                    if side == "S":
+                        st(i, y0, D, "minecraft:polished_blackstone_slab[type=top]"); st(i, y0 + 1, D, "minecraft:iron_bars")
+                    elif side == "W":
+                        b.set(ox - 1, y0, oz + i, "minecraft:polished_blackstone_slab[type=top]"); b.set(ox - 1, y0 + 1, oz + i, "minecraft:iron_bars")
+    wall_run("S", W, south_mat, [(45, 3), (62, 5), (8, 6)])
+    wall_run("W", D, west_mat, [(8, 3), (30, 6), (42, 6)])
+    wall_run("N", W, lambda i, f: WHITE if f >= 3 else GRAY, [])
+    wall_run("E", D, lambda i, f: WHITE if f >= 3 else GRAY, [])
+    # corner tower at 13th & 3rd: dark metal bay from floor 2 to above the roof, canted top
+    for f_y in range(GF, TOP + 4):
+        for k in range(0, 5):
+            b.set(ox + k, f_y, oz + D, DARK); b.set(ox - 1, f_y, oz + D - 1 - k, DARK)
+        for k in (1, 3):
+            if (f_y - GF) % FH in (1, 2) and f_y < TOP:
+                b.set(ox + k, f_y, oz + D, "minecraft:glass_pane"); b.set(ox - 1, f_y, oz + D - 1 - k, "minecraft:glass_pane")
+    st(2, TOP + 4, D - 2, "minecraft:lime_concrete"); st(2, TOP + 3, D - 2, "minecraft:white_concrete")   # green "hub" logo box
+    # "hub" entrance on 3rd Ave with a steel canopy
+    fl(28, 1, D - 1, 33, 3, D - 1, "minecraft:air")
+    b.set(ox + 30, 1, oz + D - 1, "minecraft:dark_oak_door[facing=south,half=lower,hinge=left,open=false]")
+    b.set(ox + 30, 2, oz + D - 1, "minecraft:dark_oak_door[facing=south,half=upper,hinge=left,open=false]")
+    b.set(ox + 31, 1, oz + D - 1, "minecraft:dark_oak_door[facing=south,half=lower,hinge=right,open=false]")
+    b.set(ox + 31, 2, oz + D - 1, "minecraft:dark_oak_door[facing=south,half=upper,hinge=right,open=false]")
+    b.fill(ox + 26, 4, oz + D, ox + 35, 4, oz + D + 1, "minecraft:black_concrete")
+    b.fill(ox + 31, 5, oz + D, ox + 33, 5, oz + D, "minecraft:lime_concrete"); b.set(ox + 34, 5, oz + D, "minecraft:white_concrete")
+    # black canopies over storefront doors on 13th St and 3rd Ave
+    for i in range(6, W - 6, 12):
+        b.fill(ox + i, 4, oz + D, ox + i + 2, 4, oz + D, "minecraft:black_concrete")
+    for i in range(6, D - 6, 12):
+        b.fill(ox - 1, 4, oz + i, ox - 1, 4, oz + i + 2, "minecraft:black_concrete")
+    # ---- ground floor: lobby + leasing behind the entrance, retail along 13th and 3rd, garage at the east end
+    fl(24, 1, D - 12, 38, 1, D - 12, "minecraft:smooth_quartz")                  # leasing desk
+    fl(23, 1, D - 16, 23, GF - 1, D - 2, "minecraft:white_concrete"); fl(39, 1, D - 16, 39, GF - 1, D - 2, "minecraft:white_concrete")
+    fl(80, 1, 1, W - 2, GF - 1, D - 2, "minecraft:air"); fl(80, 0, 1, W - 2, 0, D - 2, "minecraft:gray_concrete")
+    for u in range(82, W - 2, 3):
+        b.fill(ox + u, 0, oz + 3, ox + u, 0, oz + 8, "minecraft:white_concrete")   # parking stripes
+    # ---- residential floors: corridors around the courtyards, units with doors, beds, kitchens; elevators and stairs
+    CORR = [(1, 8, W - 2, 9), (1, D - 10, W - 2, D - 9), (12, 8, 13, D - 9), (44, 8, 45, D - 9), (90, 8, 91, D - 9)]
+    for f in range(2, FLOORS + 1):
+        y0 = floor_y(f)
+        for (u0, v0, u1, v1) in CORR:
+            fl(u0, y0 + 1, v0 - 1, u1, y0 + FH - 1, v0 - 1, "minecraft:white_concrete") if v0 == v1 - 1 and u1 - u0 > 4 else None
+            fl(u0, y0 + 1, v1 + 1, u1, y0 + FH - 1, v1 + 1, "minecraft:white_concrete") if v0 == v1 - 1 and u1 - u0 > 4 else None
+        for (u0, v0, u1, v1) in CORR:                     # carve corridors after walls (crossings stay open)
+            fl(u0, y0 + 1, v0, u1, y0 + FH - 1, v1, "minecraft:air")
+            for uu in range(u0 + 3, u1, 9):
+                st(uu, y0 + FH - 1 + (1 if f == FLOORS else 0), (v0 + v1) // 2, "minecraft:sea_lantern") if f != FLOORS else None
+        for u in range(3, W - 2, 7):                     # unit partitions + doors off the north and south corridors
+            for (va, vb, dv) in ((1, 6, 7), (D - 8, D - 2, D - 8)):
+                if any(c[0] <= u <= c[2] for c in CORR[2:]):
+                    continue
+                fl(u, y0 + 1, va, u, y0 + FH - 1, vb, "minecraft:white_concrete")
+                dz = dv if dv == 7 else D - 8
+                st(u + 3, y0 + 1, dz, "minecraft:spruce_door[facing=north,half=lower,hinge=left,open=false]")
+                st(u + 3, y0 + 2, dz, "minecraft:spruce_door[facing=north,half=upper,hinge=left,open=false]")
+                bv = 2 if dv == 7 else D - 3
+                st(u + 1, y0 + 1, bv, "minecraft:light_blue_bed[part=foot,facing=east]"); st(u + 2, y0 + 1, bv, "minecraft:light_blue_bed[part=head,facing=east]")
+                st(u + 5, y0 + 1, bv, "minecraft:smooth_quartz")
+        for (eu, ev) in ((44, 30), (12, 30), (90, 30)):
+            st(eu, y0, ev, "gnvcraft:elevator")
+        fl(91, y0, D - 12, 91, y0 + FH, D - 12, "minecraft:scaffolding[distance=0,bottom=false]")
+    for (eu, ev) in ((44, 30), (12, 30), (90, 30)):
+        st(eu, 0, ev, "gnvcraft:elevator"); st(eu, TOP, ev, "gnvcraft:elevator")
+    fl(91, 1, D - 12, 91, TOP, D - 12, "minecraft:scaffolding[distance=0,bottom=false]")
+    # ---- roof: membrane, HVAC, parapet, pool deck, clubhouse with mural
+    fl(0, TOP + 1, 0, W - 1, TOP + 1, 0, "minecraft:white_concrete"); fl(0, TOP + 1, D - 1, W - 1, TOP + 1, D - 1, "minecraft:white_concrete")
+    fl(0, TOP + 1, 0, 0, TOP + 1, D - 1, "minecraft:white_concrete"); fl(W - 1, TOP + 1, 0, W - 1, TOP + 1, D - 1, "minecraft:white_concrete")
+    for (u, v) in ((8, 4), (16, 4), (70, 4), (78, 4), (98, 12), (98, 24), (8, 28), (70, 28)):
+        fl(u, TOP + 1, v, u + 2, TOP + 2, v + 1, "minecraft:iron_block")
+    fl(30, TOP, 42, 82, TOP, D - 2, "minecraft:smooth_sandstone")                # deck
+    fl(65, TOP - 1, 50, 73, TOP, 54, "minecraft:water"); fl(64, TOP - 2, 49, 74, TOP - 2, 55, "minecraft:light_blue_concrete")
+    fl(60, TOP, 51, 62, TOP, 53, "minecraft:water")                              # hot tub
+    fl(30, TOP, 46, 44, TOP, D - 2, "minecraft:moss_block")                      # turf with umbrella tables
+    for (u, v) in ((33, 48), (38, 51), (42, 47), (35, 53)):
+        fl(u, TOP + 1, v, u, TOP + 2, v, "minecraft:birch_fence"); fl(u - 1, TOP + 3, v - 1, u + 1, TOP + 3, v + 1, "minecraft:white_carpet")
+        st(u, TOP + 3, v, "minecraft:blue_wool")
+    for u in range(66, 74, 2):
+        st(u, TOP + 1, 48, "minecraft:quartz_slab")                              # loungers along the pool
+    for u in range(76, 81):
+        st(u, TOP + 1, 52, "minecraft:light_blue_carpet")
+    fl(46, TOP + 1, 40, 62, TOP + 5, 45, "minecraft:white_concrete")             # clubhouse
+    fl(47, TOP + 1, 45, 61, TOP + 3, 45, "minecraft:glass")
+    mural = [(48, 4, "minecraft:orange_concrete"), (49, 4, "minecraft:orange_concrete"), (52, 3, "minecraft:cyan_terracotta"),
+             (53, 4, "minecraft:lime_concrete"), (54, 3, "minecraft:cyan_terracotta"), (57, 4, "minecraft:orange_concrete"),
+             (59, 3, "minecraft:lime_concrete"), (60, 4, "minecraft:cyan_terracotta"), (61, 5, "minecraft:orange_concrete")]
+    for (u, dy, blk) in mural:
+        st(u, TOP + dy, 40, blk); st(u, TOP + dy, 45, blk) if dy >= 4 else None
+    b.save()
+
+
+# ---------------------------------------------------------------- 13th St & University Ave, NW corner (overlay)
+def corner_13th_university():
+    """The NW corner plaza in front of The Standard / Chick-fil-A (from the corner photo): brick-banded pavers, two palms,
+    round brick bollards with concrete caps along the curb, and the Chick-fil-A storefront sign. Stamped over the generated city."""
+    b = B("corner_13th_university", "13th St & University Ave (NW corner)", "NW 13th St & W University Ave",
+          "Overlay from the corner photo: pavers, palms, brick bollards, Chick-fil-A sign.", (-26, -15), (26, 14, 13))
+    b.meta["overlay"] = True
+    for x in range(0, 24):
+        for z in range(2, 11):
+            b.set(x, 0, z, "minecraft:bricks" if (x + z) % 6 == 0 or z == 2 else "minecraft:smooth_sandstone")
+    for (x, z) in ((10, 5), (19, 5)):
+        b.fill(x, 1, z, x, 7, z, "minecraft:jungle_log")
+        for (dx, dz) in ((1, 0), (-1, 0), (0, 1), (0, -1), (2, 0), (-2, 0), (0, 2), (0, -2), (3, 0), (-3, 0), (0, 3), (0, -3)):
+            b.set(x + dx, 8 if abs(dx) + abs(dz) < 3 else 7, z + dz, "minecraft:jungle_leaves[persistent=true]")
+        b.set(x, 8, z, "minecraft:jungle_leaves[persistent=true]")
+    for (x, z) in ((23, 10), (21, 10), (23, 8), (17, 10), (13, 10)):
+        b.set(x, 1, z, "minecraft:bricks"); b.set(x, 2, z, "minecraft:smooth_stone_slab[type=bottom]")
+    b.fill(18, 3, 1, 23, 3, 1, "minecraft:red_concrete"); b.fill(19, 4, 1, 22, 4, 1, "minecraft:white_concrete")   # Chick-fil-A sign
+    b.save()
+
+
 if __name__ == "__main__":
     # The Standard and the Hub are now built on their real LiDAR / Overture footprints by the generator (see bake_core overrides).
     for old in ("the_standard", "the_hub_3rd_ave"):
         (OUT / (old + ".json")).unlink(missing_ok=True)
-    house()
-    (OUT / "index.json").write_text(json.dumps({"specs": ["house_201_nw_10th"]}))
+    house(); hub(); corner_13th_university()
+    (OUT / "index.json").write_text(json.dumps({"specs": ["house_201_nw_10th", "hub_gainesville", "corner_13th_university"]}))

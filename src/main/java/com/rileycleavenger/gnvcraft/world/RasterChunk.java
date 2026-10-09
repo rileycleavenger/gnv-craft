@@ -47,6 +47,9 @@ final class RasterChunk {
 			case GnvRaster.S_FLOOR -> b("minecraft:polished_andesite");
 			case GnvRaster.S_TRACK -> b("minecraft:red_terracotta");
 			case GnvRaster.S_GRAVEL -> b("minecraft:gravel");
+			case GnvRaster.S_ORANGE -> b("minecraft:orange_concrete");
+			case GnvRaster.S_BLUE -> b("minecraft:blue_concrete");
+			case GnvRaster.S_TURF, GnvRaster.S_GOAL_POST, GnvRaster.S_GOAL_BAR, GnvRaster.S_GOAL_UPRIGHT -> b("minecraft:moss_block");
 			default -> b("minecraft:grass_block");
 		};
 	}
@@ -111,7 +114,7 @@ final class RasterChunk {
 
 	private static boolean insideSpec(int x, int z) {
 		for (InteriorSpecs.Spec s : InteriorSpecs.all()) {
-			if (x >= s.minX() && x <= s.maxX() && z >= s.minZ() && z <= s.maxZ()) {
+			if (!s.overlay && x >= s.minX() && x <= s.maxX() && z >= s.minZ() && z <= s.maxZ()) {
 				return true;
 			}
 		}
@@ -146,12 +149,18 @@ final class RasterChunk {
 		}
 		if (bi > 0 && !spec) {
 			GnvRaster.Building info = GnvRaster.info(bi);
+			if (info != null && "stadium".equals(info.kind) && (info.fieldX != 0 || info.fieldZ != 0)
+				&& !(GnvRaster.roof(x, z) - info.baseY > 36 && x < info.fieldX - 40)) {
+				stadium(info, bi, x, z, g, out);
+				return;
+			}
 			if (info != null) {
 				building(info, bi, x, z, g, out);
 				return;
 			}
 		}
-		out.set(x, g, z, surfaceBlock(spec ? GnvRaster.S_GRASS : s));
+		out.set(x, g, z, surfaceBlock(spec && (s == GnvRaster.S_FLOOR || bi > 0) ? GnvRaster.S_GRASS : s));
+		goalpost(s, x, g, z, out);
 		// grass tufts and flowers on open lawns, never on paving
 		if (!paved(s) && s == GnvRaster.S_GRASS && GnvRaster.leafTop(x, z) == 0) {
 			int h = Math.floorMod(x * 73428767 ^ z * 912931, 97);
@@ -172,7 +181,8 @@ final class RasterChunk {
 		int bot = Math.max(g + 2, GnvRaster.leafBot(x, z));
 		// light poles, antennas and wires are unclassified in this LiDAR too: only real crowns (surrounded by canopy) become trees
 		int support = canopySupport(x, z);
-		if (support < 3) {
+		// cranes, light towers and wires also come back as "canopy": nothing in Gainesville's tree canopy is over ~32 m
+		if (support < 3 || top - g > 32) {
 			return;
 		}
 		if (GnvRaster.trunk(x, z) && support >= 7 && (!paved(s) || s == GnvRaster.S_CONCRETE)) {
@@ -274,6 +284,55 @@ final class RasterChunk {
 		return !hasLeaf(x + 1, y, z) || !hasLeaf(x - 1, y, z) || !hasLeaf(x, y, z + 1) || !hasLeaf(x, y, z - 1) || !hasLeaf(x, y + 1, z);
 	}
 
+	/** Goalposts on a football field: single post, crossbar 10 ft up, uprights to 30 ft (in blocks: 3 and 9). */
+	private static void goalpost(int s, int x, int g, int z, Sink out) {
+		BlockState yellow = b("minecraft:yellow_concrete");
+		switch (s) {
+			case GnvRaster.S_GOAL_POST -> {
+				for (int y = g + 1; y <= g + 3; y++) {
+					out.set(x, y, z, yellow);
+				}
+			}
+			case GnvRaster.S_GOAL_BAR -> out.set(x, g + 3, z, yellow);
+			case GnvRaster.S_GOAL_UPRIGHT -> {
+				for (int y = g + 3; y <= g + 9; y++) {
+					out.set(x, y, z, yellow);
+				}
+			}
+			default -> {
+			}
+		}
+	}
+
+	/**
+	 * A stadium column: the measured LiDAR seating surface, coloured from the aerial photo, solid concrete under it with a
+	 * concourse at ground level, and the photographed brick/concrete exterior on the outer edge.
+	 */
+	private static void stadium(GnvRaster.Building info, int bi, int x, int z, int g, Sink out) {
+		int base = info.baseY;
+		int top = GnvRaster.roof(x, z);
+		boolean edge = !sameBuilding(bi, x - 1, z) || !sameBuilding(bi, x + 1, z) || !sameBuilding(bi, x, z - 1) || !sameBuilding(bi, x, z + 1);
+		boolean nearEdge = !edge && (!sameBuilding(bi, x - 2, z) || !sameBuilding(bi, x + 2, z) || !sameBuilding(bi, x, z - 2) || !sameBuilding(bi, x, z + 2));
+		String photo = GnvRaster.roofColor(x, z);
+		BlockState seat = b(photo != null ? photo : "minecraft:light_gray_concrete");
+		out.set(x, base, z, b("minecraft:smooth_stone"));
+		boolean low = top - base <= 2;                                  // the padded field wall
+		for (int y = base + 1; y < top; y++) {
+			int fy = y - base;
+			if (edge && !low) {
+				boolean opening = fy <= 4 && Math.floorMod(x + z, 6) < 3 || fy > 4 && fy % 5 >= 2 && fy % 5 <= 3 && Math.floorMod(x + z, 4) != 0;
+				out.set(x, y, z, opening ? b("minecraft:air") : b(fy <= 15 ? "minecraft:bricks" : "minecraft:light_gray_concrete"));
+			} else if (!low && !nearEdge && fy <= 4 && top - base > 10) {
+				if (fy == 4 && Math.floorMod(x * 7 + z * 13, 11) == 0) {
+					out.set(x, y, z, b("minecraft:sea_lantern"));          // concourse lights
+				}
+			} else {
+				out.set(x, y, z, b("minecraft:light_gray_concrete"));
+			}
+		}
+		out.set(x, top, z, low ? b("minecraft:orange_concrete") : seat);
+	}
+
 	private static boolean sameBuilding(int bi, int x, int z) {
 		return GnvRaster.covers(x, z) && GnvRaster.building(x, z) == bi;
 	}
@@ -330,6 +389,12 @@ final class RasterChunk {
 				}
 				boolean window = y <= interiorTop && fy % floorH >= 1 && fy % floorH <= Math.min(2, floorH - 2) && Math.floorMod(x + z, 4) != 0
 					&& !(kind.equals("parking") || kind.equals("garage"));
+				// recessed balconies: every 12th bay from the third floor up, railing at the facade and open above it
+				if (info.facade != null && info.facade.rail != null && fy / floorH >= 2 && y <= interiorTop
+					&& Math.floorMod(x + z, 12) >= 4 && Math.floorMod(x + z, 12) <= 6 && fy % floorH != 0) {
+					out.set(x, y, z, fy % floorH == 1 ? b(info.facade.rail) : b("minecraft:air"));
+					continue;
+				}
 				out.set(x, y, z, window ? b("minecraft:glass") : facade(info, x, y, z, fy / floorH));
 			} else if (y > interiorTop) {
 				// attic / space under a pitched roof

@@ -30,6 +30,8 @@ public final class InteriorSpecs {
 		public int[] anchor;
 		public int[] size;
 		public long[] hide_osm = new long[0];
+		/** Overlay specs (street furniture, plazas) are stamped on top of the generated city instead of replacing it. */
+		public boolean overlay;
 		public String[] palette;
 		public int[][] ops;
 		transient BlockState[] states;

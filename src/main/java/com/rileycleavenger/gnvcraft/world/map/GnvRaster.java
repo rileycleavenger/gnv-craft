@@ -23,7 +23,7 @@ public final class GnvRaster {
 
 	public static final int S_GRASS = 0, S_ASPHALT = 1, S_CONCRETE = 2, S_PARKING = 3, S_WATER = 4, S_SAND = 5, S_LANE_WHITE = 6,
 		S_CENTER_YELLOW = 7, S_CROSSWALK = 8, S_TURF = 9, S_BRICK = 10, S_PATH_DIRT = 11, S_FLOOR = 12, S_EDGE_WHITE = 13,
-		S_TRACK = 14, S_GRAVEL = 15;
+		S_TRACK = 14, S_GRAVEL = 15, S_ORANGE = 16, S_BLUE = 17, S_GOAL_POST = 18, S_GOAL_BAR = 19, S_GOAL_UPRIGHT = 20;
 
 	public static final class Building {
 		public int i;
@@ -37,6 +37,9 @@ public final class GnvRaster {
 		public @Nullable String addr;
 		public @Nullable Door door;
 		public @Nullable Facade facade;
+		/** Stadiums: centre of the field, so seats face it and the press box can be told apart. */
+		public double fieldX;
+		public double fieldZ;
 		public int @Nullable [] stair;
 		public int @Nullable [] elevator;
 	}

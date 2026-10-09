@@ -258,6 +258,9 @@ def main():
     regions = sorted(f.name for f in bc.OUT.glob("r.*.bin.gz"))
     (bc.OUT / "buildings.json").write_text(json.dumps({"region": R, "regions": regions, "buildings": table,
                                                         "roofPalette": [b for b, _ in bc.ROOF_PALETTE]}, separators=(",", ":")))
+    import post_fixes, bake_stadium
+    post_fixes.main()
+    bake_stadium.main()
     total = sum(f.stat().st_size for f in bc.OUT.iterdir())
     print(f"{len(table)} buildings, {written} regions, {total / 1e6:.1f} MB", flush=True)
 
