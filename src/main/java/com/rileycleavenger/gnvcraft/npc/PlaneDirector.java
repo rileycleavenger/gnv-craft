@@ -38,7 +38,7 @@ public final class PlaneDirector {
 		GnvMap.Landmark apron = map.nearestKind("airport_apron", tx, tz);
 		int x = apron == null ? tx : apron.p[0];
 		int z = apron == null ? tz : apron.p[1];
-		return new BlockPos(x, GnvChunkGenerator.SURFACE_Y + 1, z);
+		return new BlockPos(x, com.rileycleavenger.gnvcraft.world.map.GnvRaster.standY(x, z), z);
 	}
 
 	public static void onPlaneLost(ServerLevel level) {

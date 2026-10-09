@@ -52,6 +52,8 @@ public class HeySirGameTests {
 		TEST_FUNCTIONS.register("drinking", () -> HeySirGameTests::drinking);
 	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> SCOOTER =
 		TEST_FUNCTIONS.register("scooter_rental", () -> HeySirGameTests::scooterRental);
+	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> MAP_DATA =
+		TEST_FUNCTIONS.register("map_data", () -> HeySirGameTests::mapData);
 	private static final DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> ENTITIES =
 		TEST_FUNCTIONS.register("npcs_spawn", () -> HeySirGameTests::npcsSpawn);
 
@@ -65,6 +67,7 @@ public class HeySirGameTests {
 		event.registerTest(GnvCraftMod.id("recipe_loaded"), new FunctionGameTestInstance(RECIPE.getKey(), testData(environment, 40)));
 		event.registerTest(GnvCraftMod.id("drinking"), new FunctionGameTestInstance(DRINKING.getKey(), testData(environment, 200)));
 		event.registerTest(GnvCraftMod.id("scooter_rental"), new FunctionGameTestInstance(SCOOTER.getKey(), testData(environment, 200)));
+		event.registerTest(GnvCraftMod.id("map_data"), new FunctionGameTestInstance(MAP_DATA.getKey(), testData(environment, 40)));
 		event.registerTest(GnvCraftMod.id("npcs_spawn"), new FunctionGameTestInstance(ENTITIES.getKey(), testData(environment, 200)));
 		event.registerTest(GnvCraftMod.id("lifecycle"), new FunctionGameTestInstance(LIFECYCLE.getKey(), testData(environment, 6000)));
 	}
@@ -114,6 +117,17 @@ public class HeySirGameTests {
 		helper.assertFalse(scooter.isRentedBy(other, now), "nobody else can ride");
 		helper.assertTrue(scooter.rentedUntil() == now + HeySirDirector.DAY_TICKS, "rented for exactly one in-game day");
 		helper.assertFalse(scooter.isRentedBy(renter, now + HeySirDirector.DAY_TICKS), "locks again after a day");
+		helper.succeed();
+	}
+
+	private static void mapData(GameTestHelper helper) {
+		helper.assertTrue(com.rileycleavenger.gnvcraft.world.map.GnvRaster.covers(0, 0), "LiDAR core covers 13th & University");
+		helper.assertTrue(com.rileycleavenger.gnvcraft.world.map.GnvRaster.surface(0, 0) != com.rileycleavenger.gnvcraft.world.map.GnvRaster.S_GRASS, "the intersection is paved");
+		boolean standard = com.rileycleavenger.gnvcraft.world.map.GnvRaster.buildings().stream().anyMatch(b -> "The Standard at Gainesville".equals(b.name) && b.levels == 10);
+		helper.assertTrue(standard, "The Standard is a 10-level building from the LiDAR");
+		var house = com.rileycleavenger.gnvcraft.world.map.InteriorSpecs.all().stream().filter(sp -> sp.id.equals("house_201_nw_10th")).findFirst();
+		helper.assertTrue(house.isPresent(), "201 NW 10th St spec loads");
+		helper.assertTrue(com.rileycleavenger.gnvcraft.world.map.GnvRaster.covers(house.get().minX(), house.get().minZ()), "the house sits on LiDAR terrain");
 		helper.succeed();
 	}
 

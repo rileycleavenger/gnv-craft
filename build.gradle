@@ -73,7 +73,7 @@ def screenshotOptions = file('run/screenshots/options.txt')
 tasks.matching { it.name == 'runScreenshotClient' }.configureEach {
     doFirst {
         screenshotOptions.parentFile.mkdirs()
-        screenshotOptions.text = "enableVsync:false\nmaxFps:60\nonboardAccessibility:false\n"
+        screenshotOptions.text = "enableVsync:false\nmaxFps:60\nonboardAccessibility:false\nrenderDistance:12\nguiScale:2\npauseOnLostFocus:false\n"
     }
 }
 

@@ -92,7 +92,18 @@ def fetch():
     json.dump({"elements": els}, open(RAW, "w"))
     return {"elements": els}
 
+try:
+    from pyproj import Transformer
+    _UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
+except ImportError:  # run with tools/.venv/bin/python so OSM lines up exactly with the LiDAR grid
+    _UTM = None
+
 def project(lat, lon, o):
+    """WGS84 -> block coords: UTM 17N metres relative to the origin, +X east, +Z south."""
+    if _UTM is not None:
+        e0, n0 = _UTM.transform(o[1], o[0])
+        e, n = _UTM.transform(lon, lat)
+        return [round(e - e0), round(n0 - n)]
     x = (lon - o[1]) * 111320 * math.cos(math.radians(o[0]))
     z = -(lat - o[0]) * 110574
     return [round(x), round(z)]

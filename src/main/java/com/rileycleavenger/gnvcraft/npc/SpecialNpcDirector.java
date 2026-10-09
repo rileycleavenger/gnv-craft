@@ -6,6 +6,7 @@ import com.rileycleavenger.gnvcraft.registry.ModAttachments;
 import com.rileycleavenger.gnvcraft.registry.ModEntities;
 import com.rileycleavenger.gnvcraft.world.GnvChunkGenerator;
 import com.rileycleavenger.gnvcraft.world.map.GnvMap;
+import com.rileycleavenger.gnvcraft.world.map.GnvRaster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -34,12 +35,32 @@ public final class SpecialNpcDirector {
 		return level.getChunkSource().getGenerator() instanceof GnvChunkGenerator;
 	}
 
-	/** Spot for Dennis: the Chick-fil-A at 13th & University, else the map origin. */
+	/**
+	 * Spot for Dennis: the sidewalk corner of 13th St & University Ave on the Chick-fil-A side. Searches outward from the point
+	 * between the restaurant and the intersection for the nearest open sidewalk cell.
+	 */
 	public static BlockPos dennisHome() {
 		GnvMap.Landmark l = GnvMap.get().landmark("chick-fil-a");
-		int x = l == null ? 0 : l.p[0];
-		int z = l == null ? 0 : l.p[1];
-		return new BlockPos(x - 3, GnvChunkGenerator.SURFACE_Y + 1, z + 3);
+		// the corner itself: just off the intersection on the Chick-fil-A side
+		int cx = l == null ? 0 : Integer.signum(l.p[0]) * 12;
+		int cz = l == null ? 0 : Integer.signum(l.p[1]) * 12;
+		if (GnvRaster.covers(cx, cz)) {
+			for (int r = 0; r <= 24; r++) {
+				for (int dx = -r; dx <= r; dx++) {
+					for (int dz = -r; dz <= r; dz++) {
+						if (Math.max(Math.abs(dx), Math.abs(dz)) != r) {
+							continue;
+						}
+						int x = cx + dx;
+						int z = cz + dz;
+						if (GnvRaster.surface(x, z) == GnvRaster.S_CONCRETE && GnvRaster.building(x, z) == 0 && GnvRaster.leafTop(x, z) == 0) {
+							return new BlockPos(x, GnvRaster.standY(x, z), z);
+						}
+					}
+				}
+			}
+		}
+		return new BlockPos(cx, GnvRaster.standY(cx, cz), cz);
 	}
 
 	public static void onDennisDied(ServerLevel level) {

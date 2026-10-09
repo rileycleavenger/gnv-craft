@@ -3,6 +3,8 @@ package com.rileycleavenger.gnvcraft.world;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.rileycleavenger.gnvcraft.world.map.GnvMap;
+import com.rileycleavenger.gnvcraft.world.map.GnvRaster;
+import com.rileycleavenger.gnvcraft.world.map.InteriorSpecs;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
@@ -52,6 +54,13 @@ public class GnvChunkGenerator extends ChunkGenerator {
 		int z0 = chunk.getPos().getMinBlockZ();
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
+		if (GnvRaster.coversChunk(x0, z0)) {
+			RasterChunk.build(x0, z0, (x, y, z, state) -> {
+				chunk.setBlockState(pos.set(x - x0, y, z - z0), state);
+				oceanFloor.update(x - x0, y, z - z0, state);
+				worldSurface.update(x - x0, y, z - z0, state);
+			});
+		} else {
 		ChunkPlan plan = new ChunkPlan(GnvMap.get(), x0, z0);
 		for (int lx0 = 0; lx0 < 16; lx0++) {
 			for (int lz0 = 0; lz0 < 16; lz0++) {
@@ -64,12 +73,19 @@ public class GnvChunkGenerator extends ChunkGenerator {
 				});
 			}
 		}
+		}
+		// Hand-authored buildings (The Standard, The Hub, ...) are stamped over the generated city.
+		InteriorSpecs.stamp(x0, z0, (x, y, z, state) -> {
+			chunk.setBlockState(pos.set(x - x0, y, z - z0), state);
+			oceanFloor.update(x - x0, y, z - z0, state);
+			worldSurface.update(x - x0, y, z - z0, state);
+		});
 		return CompletableFuture.completedFuture(chunk);
 	}
 
 	@Override
 	public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
-		return SURFACE_Y + 1;
+		return GnvRaster.standY(x, z);
 	}
 
 	@Override

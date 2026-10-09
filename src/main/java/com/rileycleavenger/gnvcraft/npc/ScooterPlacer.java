@@ -80,7 +80,7 @@ public final class ScooterPlacer {
 				if (Math.abs(p[0] - px) > NEAR || Math.abs(p[1] - pz) > NEAR || placed.contains(p[2])) {
 					continue;
 				}
-				BlockPos pos = new BlockPos(p[0], GnvChunkGenerator.SURFACE_Y + 1, p[1]);
+				BlockPos pos = new BlockPos(p[0], com.rileycleavenger.gnvcraft.world.map.GnvRaster.standY(p[0], p[1]), p[1]);
 				if (!level.isLoaded(pos)) {
 					continue;
 				}

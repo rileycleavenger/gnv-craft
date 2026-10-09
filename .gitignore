@@ -40,3 +40,9 @@ repo/
 !**/src/**/repo/
 tools/osm/raw.json
 tools/osm/tiles/
+reference/
+tools/lidar/cache/
+tools/.venv/
+tools/.mapillary_token
+tools/.map_tiles_api_token
+__pycache__/

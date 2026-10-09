@@ -27,14 +27,15 @@ final class ChunkPlan {
 	private final int x0, z0;
 	private final List<GnvMap.Road> roads;
 	private final List<GnvMap.Area> areas;
-	private final List<GnvMap.Building> buildings;
+	private final java.util.List<GnvMap.Building> buildings;
 
 	ChunkPlan(GnvMap map, int x0, int z0) {
 		this.x0 = x0;
 		this.z0 = z0;
 		this.roads = map.query(GnvMap.Road.class, x0, z0, x0 + 15, z0 + 15);
 		this.areas = map.query(GnvMap.Area.class, x0, z0, x0 + 15, z0 + 15);
-		this.buildings = map.query(GnvMap.Building.class, x0 - 1, z0 - 1, x0 + 16, z0 + 16);
+		this.buildings = new java.util.ArrayList<>(map.query(GnvMap.Building.class, x0 - 1, z0 - 1, x0 + 16, z0 + 16));
+		this.buildings.removeIf(b -> com.rileycleavenger.gnvcraft.world.map.InteriorSpecs.isHidden(b.id));
 	}
 
 	/** Writes the column and returns the top Y that was set. */

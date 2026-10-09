@@ -155,7 +155,7 @@ final class BuildingBlocks {
 		return Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
 	}
 
-	private static BlockState furniture(boolean bar, String kind, int ax, int az) {
+	static BlockState furniture(boolean bar, String kind, int ax, int az) {
 		if (bar) {
 			if (az == 6 && ax >= 2 && ax <= 6) {
 				return ax == 4 ? ModBlocks.BAR_TAP.get().defaultBlockState() : Blocks.BARREL.defaultBlockState();

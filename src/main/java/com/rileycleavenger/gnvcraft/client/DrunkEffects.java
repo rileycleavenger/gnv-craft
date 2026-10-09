@@ -114,6 +114,10 @@ public final class DrunkEffects {
 		if (s <= 0.0F || original == null || original.isLooping() || original.getDelay() > 0 || original.getSource() == net.minecraft.sounds.SoundSource.MUSIC) {
 			return;
 		}
+		// A sound's volume and pitch can only be read once it has been resolved against the sound manager.
+		if (original.resolve(Minecraft.getInstance().getSoundManager()) == null) {
+			return;
+		}
 		RandomSource random = RandomSource.create();
 		float pitch = original.getPitch() * (1.0F - 0.35F * s + (random.nextFloat() - 0.5F) * 0.35F * s);
 		float volume = original.getVolume() * (1.0F - 0.45F * s);

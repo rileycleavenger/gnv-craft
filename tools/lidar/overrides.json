@@ -1,0 +1,21 @@
+{
+  "_comment": "Corrections where OSM is wrong or missing, and facades read off Mapillary street photos (CC BY-SA 4.0). point = any block inside the building. facade: base material for the first baseFloors floors, upper material above, optional vertical bands every bandEvery blocks.",
+  "buildings": [
+    {"point": [-50, -80], "name": "The Standard at Gainesville", "kind": "apartments", "levels": 10, "addr": "1360 W University Ave",
+     "facade": {"base": "minecraft:cut_sandstone", "baseFloors": 1, "upper": "minecraft:bricks", "band": "minecraft:smooth_sandstone", "bandEvery": 9, "rail": "minecraft:black_concrete"},
+     "source": "Mapillary 2021: tan stone-veneer ground floor with cream recesses (Orangetheory Fitness), red brick and tan panels above, dark balcony rails"},
+    {"point": [80, -238], "name": "Hub Gainesville (3rd Ave)", "kind": "apartments", "levels": 7, "addr": "1258 NW 3rd Ave",
+     "facade": {"base": "minecraft:bricks", "baseFloors": 2, "upper": "minecraft:white_concrete", "band": "minecraft:gray_concrete", "bandEvery": 11, "rail": "minecraft:black_concrete"},
+     "source": "Mapillary 2021: red-brick base, white upper floors with dark-gray balcony stacks"},
+    {"point": [60, -70], "name": "Holiday Inn Gainesville University Center", "kind": "hotel", "levels": 6, "addr": "1250 W University Ave",
+     "facade": {"base": "minecraft:smooth_sandstone", "baseFloors": 1, "upper": "minecraft:smooth_sandstone", "band": "minecraft:sandstone", "bandEvery": 12},
+     "source": "Mapillary 2019: beige stucco, green Holiday Inn signage"},
+    {"point": [45, -150], "name": "Publix", "kind": "supermarket", "levels": 2, "addr": "203 NW 13th St",
+     "facade": {"base": "minecraft:bricks", "baseFloors": 0, "plinth": "minecraft:bricks", "upper": "minecraft:white_concrete"},
+     "source": "Mapillary 2019: white horizontal siding over a red-brick base course, large windows"},
+    {"point": [-173, -30], "name": "1412 W University Ave", "kind": "retail", "levels": 2, "addr": "1412 W University Ave",
+     "facade": {"base": "minecraft:pink_terracotta", "baseFloors": 0, "upper": "minecraft:pink_terracotta", "plinth": "minecraft:stone_bricks", "band": "minecraft:white_concrete", "bandEvery": 7},
+     "source": "Mapillary 2016: two-story red-pink storefront with white trim, red awnings, gray concrete planter walls"},
+    {"point": [435, -145], "name": "201 NW 10th St", "kind": "house", "levels": 1, "addr": "201 NW 10th St"}
+  ]
+}

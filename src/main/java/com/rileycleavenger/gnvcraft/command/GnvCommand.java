@@ -49,6 +49,15 @@ public final class GnvCommand {
 			z = park.getZ();
 		} else if (!key.equals("origin") && !key.equals("13th")) {
 			GnvMap.Landmark l = GnvMap.get().landmark(key);
+			for (var spec : com.rileycleavenger.gnvcraft.world.map.InteriorSpecs.all()) {
+				if (l == null && (spec.name.toLowerCase().contains(key) || spec.id.contains(key.replace(' ', '_')))) {
+					int tx = spec.anchor[0] + spec.size[0] / 2;
+					int tz = spec.anchor[1] + spec.size[2] + 3;
+					player.teleportTo(tx + 0.5, com.rileycleavenger.gnvcraft.world.map.GnvRaster.standY(tx, tz), tz + 0.5);
+					source.sendSuccess(() -> Component.literal("Teleported to " + spec.name), false);
+					return 1;
+				}
+			}
 			if (l == null) {
 				source.sendFailure(Component.literal("No landmark matching '" + place + "'. Try: origin, chick-fil-a, a bar name, airport."));
 				return 0;
@@ -56,7 +65,7 @@ public final class GnvCommand {
 			x = l.p[0];
 			z = l.p[1];
 		}
-		player.teleportTo(x + 0.5, GnvChunkGenerator.SURFACE_Y + 1, z + 0.5);
+		player.teleportTo(x + 0.5, com.rileycleavenger.gnvcraft.world.map.GnvRaster.standY(x, z), z + 0.5);
 		source.sendSuccess(() -> Component.literal("Teleported to " + place), false);
 		return 1;
 	}

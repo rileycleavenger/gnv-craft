@@ -1,0 +1,7 @@
+laspy[lazrs]
+numpy
+scipy
+pyproj
+shapely
+pillow
+overturemaps
