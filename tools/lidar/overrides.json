@@ -13,16 +13,16 @@
    "facade": {
     "base": "minecraft:cut_sandstone",
     "baseFloors": 1,
-    "upper": "minecraft:smooth_quartz",
+    "upper": "minecraft:smooth_sandstone",
     "band": "minecraft:bricks",
-    "bandEvery": 11,
+    "bandEvery": 9,
     "bay": "minecraft:light_blue_stained_glass",
     "bayEvery": 8,
     "rail": "minecraft:white_stained_glass_pane",
     "roof": "condensers",
     "parapet": "minecraft:white_stained_glass_pane"
    },
-   "source": "User photo + Mapillary: tan stone-veneer ground floor with the Chick-fil-A at the corner, cream body, stacked glass balcony bays with white slab edges, red-brick piers; roof (user aerial photo): glass railing all round, pool deck with palms, planters, hot tubs, pergolas and loungers at the University Ave corner, rows of dark condensers elsewhere"
+   "source": "User photo + Mapillary: tan stone-veneer ground floor with the Chick-fil-A at the corner, cream body, stacked glass balcony bays with white slab edges, red-brick piers; roof (user aerial photo): glass railing all round, pool deck with palms, planters, hot tubs, pergolas and loungers at the University Ave corner, rows of dark condensers elsewhere; colours per the user's comparison: warm cream stucco, tan stone base, red-brick piers"
   },
   {
    "point": [
