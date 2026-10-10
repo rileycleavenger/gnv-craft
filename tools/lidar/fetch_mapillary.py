@@ -16,8 +16,8 @@ CACHE = HERE / "cache" / "mapillary"
 ROOT = HERE.parent.parent
 TOKEN = (HERE.parent / ".mapillary_token").read_text().strip()
 ORIGIN = (29.6521, -82.3393)
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
-TO_LL = Transformer.from_crs("EPSG:32617", "EPSG:4326", always_xy=True)
+TO_UTM = Transformer.from_crs("EPSG:4326", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
+TO_LL = Transformer.from_crs("+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", "EPSG:4326", always_xy=True)
 E0, N0 = TO_UTM.transform(ORIGIN[1], ORIGIN[0])
 
 

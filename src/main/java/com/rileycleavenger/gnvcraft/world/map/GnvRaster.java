@@ -55,6 +55,13 @@ public final class GnvRaster {
 		public @Nullable String rail;
 		/** Horizontal trim at every floor line (stone courses on UF's brick buildings). */
 		public @Nullable String trim;
+		/** Vertical glass balcony bays: 3 blocks wide every bayEvery blocks, white slab edge at each floor line. */
+		public @Nullable String bay;
+		public int bayEvery;
+		/** Roof dressing: "condensers" = rows of HVAC condensers, with a pool deck (palms, loungers, pergolas) around rooftop pools. */
+		public @Nullable String roof;
+		/** Railing block one above the roof edge (glass on The Standard). */
+		public @Nullable String parapet;
 	}
 
 	public static final class Door {

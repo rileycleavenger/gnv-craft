@@ -23,6 +23,8 @@ public final class ModItems {
 	public static final DeferredItem<DrinkItem> BEER = drink("beer", 1.0F);
 	public static final DeferredItem<DrinkItem> SHOT = drink("shot", 1.5F);
 	public static final DeferredItem<DrinkItem> COCKTAIL = drink("cocktail", 2.0F);
+	public static final DeferredItem<Item> NAPKIN = ITEMS.registerItem("napkin", Item::new, properties -> properties.stacksTo(64));
+	public static final DeferredItem<Item> DONNIE_ID = ITEMS.registerItem("donnie_id", Item::new, properties -> properties.stacksTo(1).rarity(Rarity.UNCOMMON));
 	// Entity types register before items, so HEYSIR is available here.
 	public static final DeferredItem<SpawnEggItem> HEYSIR_SPAWN_EGG = ITEMS.registerItem(
 		"heysir_spawn_egg", SpawnEggItem::new, properties -> properties.spawnEgg(ModEntities.HEYSIR.get())
@@ -48,6 +50,8 @@ public final class ModItems {
 			event.accept(BEER);
 			event.accept(SHOT);
 			event.accept(COCKTAIL);
+			event.accept(NAPKIN);
+			event.accept(DONNIE_ID);
 		} else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
 			event.accept(HEYSIR_SPAWN_EGG);
 		}

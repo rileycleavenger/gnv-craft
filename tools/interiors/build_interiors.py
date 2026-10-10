@@ -305,7 +305,7 @@ def the_hub():
 # ---------------------------------------------------------------- 201 NW 10th St
 def house():
     """201 NW 10th St, from the 37 listing photos (reference/201-nw-10th, git-ignored) on the footprint the LiDAR and 2023 aerial
-    photo show (x 428..443, z -152..-138, front facing NW 10th St to the west, red-brick driveway along the south side).
+    photo show (x 426..441, z -157..-143, front facing NW 10th St to the west, red-brick driveway along the south side).
 
     Exterior: pale-yellow textured stucco, white window trim, kelly-green front door with a pale-green surround and steps, a carport
     in the front-south corner with a second green door, dark-gray shingle gable roof with light siding in the front gable.
@@ -317,7 +317,7 @@ def house():
     YX, YZ = 7, 0        # front yard to the street, then the house
     b = B("house_201_nw_10th", "201 NW 10th St", "201 NW 10th St, Gainesville, FL 32601",
           "Rebuilt from the listing photos on the real footprint; room sizes inferred. 4 bed / 3 bath.",
-          (428 - YX, -152), (V + YX + 3, 16, U + 4))
+          (426 - YX, -157), (V + YX + 3, 16, U + 4))
     def X(v): return YX + v
     def Z(u): return YZ + u
     def fl(u0, v0, u1, v1, y0, y1, blk): b.fill(X(min(v0, v1)), y0, Z(min(u0, u1)), X(max(v0, v1)), y1, Z(max(u0, u1)), blk)
@@ -436,7 +436,7 @@ def hub():
     TOP = GF + FH * (FLOORS - 1)   # roof slab Y (26)
     b = B("hub_gainesville", "Hub Gainesville (3rd Ave)", "1258 NW 3rd Ave, Gainesville, FL 32601",
           "From photos: 8 floors, segmented brick/metal facades, balconies, rooftop pool deck and courtyards on the real footprint.",
-          (24, -266), (W + 2, TOP + 8, D + 4))
+          (21, -266), (W + 2, TOP + 8, D + 6))
     ox, oz = 1, 1                  # building starts 1 block in (room for the corner tower and balconies to stick out)
     def fl(u0, y0, v0, u1, y1, v1, blk): b.fill(ox + min(u0, u1), y0, oz + min(v0, v1), ox + max(u0, u1), y1, oz + max(v0, v1), blk)
     def st(u, y, v, blk): b.set(ox + u, y, oz + v, blk)
@@ -574,6 +574,7 @@ def hub():
         st(u, TOP + 1, 48, "minecraft:quartz_slab")                              # loungers along the pool
     for u in range(76, 81):
         st(u, TOP + 1, 52, "minecraft:light_blue_carpet")
+    unit_508(b, ox, oz, D, floor_y(5), FH)
     fl(46, TOP + 1, 40, 62, TOP + 5, 45, "minecraft:white_concrete")             # clubhouse
     fl(47, TOP + 1, 45, 61, TOP + 3, 45, "minecraft:glass")
     mural = [(48, 4, "minecraft:orange_concrete"), (49, 4, "minecraft:orange_concrete"), (52, 3, "minecraft:cyan_terracotta"),
@@ -582,6 +583,84 @@ def hub():
     for (u, dy, blk) in mural:
         st(u, TOP + dy, 40, blk); st(u, TOP + dy, 45, blk) if dy >= 4 else None
     b.save()
+
+
+def unit_508(b, ox, oz, D, y0, FH):
+    """Hub unit 508 (5th floor, 3rd Ave side), from the published 4-bed floor plan: shared C1/C2 'Lite' room (west), bath,
+    bedroom B, entry with washer/dryer, living + dining with the balcony, kitchen wall (fridge, dishwasher, sink, range),
+    primary bedroom A with its own bath (east). 15 x 8 blocks inside; the corridor jogs 2 blocks north around it."""
+    def st(u, y, v, blk): b.set(ox + u, y, oz + v, blk)
+    def fl(u0, y_0, v0, u1, y_1, v1, blk): b.fill(ox + min(u0, u1), y_0, oz + min(v0, v1), ox + max(u0, u1), y_1, oz + max(v0, v1), blk)
+    U0, V0 = 39, D - 9                       # cell (c, r) = (U0 + c, V0 + r); r0 next to the corridor, r7 next to the street
+    y1, y2 = y0 + 1, y0 + FH - 1
+    WALL, AIR = "minecraft:white_concrete", "minecraft:air"
+    def c(cc, rr, blk, h=1):
+        for k in range(h):
+            st(U0 + cc, y1 + k, V0 + rr, blk)
+    def wall(c0, r0, c1, r1): fl(U0 + c0, y1, V0 + r0, U0 + c1, y2, V0 + r1, WALL)
+    def door(cc, rr, facing, kind="minecraft:birch_door", hinge="left"):
+        st(U0 + cc, y1, V0 + rr, f"{kind}[facing={facing},half=lower,hinge={hinge},open=false]")
+        st(U0 + cc, y1 + 1, V0 + rr, f"{kind}[facing={facing},half=upper,hinge={hinge},open=false]")
+    # reset the area, then the jogged corridor and its links to the main corridor and the north-south corridor
+    fl(38, y1, D - 13, 54, y2, D - 2, WALL)
+    fl(39, y1, D - 12, 53, y2, D - 11, AIR)
+    fl(38, y1, D - 12, 38, y2, D - 10, AIR); fl(54, y1, D - 12, 54, y2, D - 10, AIR)
+    fl(44, y1, D - 13, 45, y2, D - 13, AIR)
+    fl(U0, y1, V0, U0 + 14, y2, V0 + 7, AIR)
+    fl(U0, y0, V0, U0 + 14, y0, V0 + 7, "minecraft:stripped_birch_wood")       # light wood-look plank floor
+    # walls
+    wall(3, 0, 3, 7)                                     # C room | rest
+    wall(4, 1, 6, 1)                                     # bath C bottom wall
+    wall(4, 3, 6, 3); wall(7, 3, 7, 7)                   # bedroom B
+    wall(7, 0, 7, 0)                                     # coat closet
+    wall(11, 0, 11, 7)                                   # kitchen wall | A
+    wall(12, 2, 14, 2)                                   # bath A
+    # doors
+    door(8, -1, "south", "minecraft:spruce_door")        # entry from the corridor
+    door(3, 2, "west"); door(4, 1, "north"); door(4, 3, "south"); door(11, 7, "east"); door(12, 2, "north")
+    # C1 / C2 shared room: bed, desk, closets, desk, bed
+    c(0, 0, "minecraft:white_bed[part=head,facing=west]"); c(1, 0, "minecraft:white_bed[part=foot,facing=west]")
+    c(0, 2, "minecraft:smooth_quartz_slab[type=top]"); c(1, 2, "minecraft:oak_stairs[facing=east,half=bottom]")
+    c(0, 3, "minecraft:barrel[facing=up]", 2); c(0, 4, "minecraft:barrel[facing=up]", 2)
+    c(0, 5, "minecraft:smooth_quartz_slab[type=top]"); c(1, 5, "minecraft:oak_stairs[facing=east,half=bottom]")
+    c(0, 7, "minecraft:white_bed[part=head,facing=west]"); c(1, 7, "minecraft:white_bed[part=foot,facing=west]")
+    # bath C: toilet, sink, shower
+    c(4, 0, "minecraft:quartz_stairs[facing=north,half=bottom]"); c(5, 0, "minecraft:cauldron"); c(6, 0, "minecraft:water_cauldron[level=3]")
+    # washer / dryer in the hall
+    c(7, 1, "minecraft:white_concrete"); c(7, 2, "minecraft:white_concrete")
+    # bedroom B: desk, bed
+    c(6, 5, "minecraft:smooth_quartz_slab[type=top]"); c(5, 5, "minecraft:oak_stairs[facing=east,half=bottom]")
+    c(6, 7, "minecraft:white_bed[part=head,facing=east]"); c(5, 7, "minecraft:white_bed[part=foot,facing=east]")
+    c(4, 6, "minecraft:barrel[facing=up]", 2)
+    # kitchen wall: fridge, dishwasher, sink, counter, range, counter
+    c(10, 0, "minecraft:iron_block", 2); c(10, 1, "minecraft:smooth_quartz"); c(10, 2, "minecraft:cauldron")
+    c(10, 3, "minecraft:smooth_quartz"); c(10, 4, "minecraft:furnace[facing=west]"); c(10, 5, "minecraft:smooth_quartz")
+    # dining table with four chairs, L-shaped couch, coffee table
+    c(8, 3, "minecraft:spruce_slab[type=top]"); c(9, 3, "minecraft:spruce_slab[type=top]")
+    for cc in (8, 9):
+        c(cc, 2, "minecraft:oak_stairs[facing=south,half=bottom]"); c(cc, 4, "minecraft:oak_stairs[facing=north,half=bottom]")
+    for rr in (5, 6, 7):
+        c(8, rr, "minecraft:gray_wool")
+    c(9, 7, "minecraft:gray_wool"); c(9, 5, "minecraft:spruce_trapdoor[half=bottom,facing=north]")
+    # bedroom A: bath (toilet, sink, shower), closet, bed, desk
+    c(12, 0, "minecraft:quartz_stairs[facing=north,half=bottom]"); c(13, 0, "minecraft:cauldron"); c(14, 0, "minecraft:water_cauldron[level=3]")
+    c(14, 3, "minecraft:barrel[facing=up]", 2); c(13, 3, "minecraft:barrel[facing=up]", 2)
+    c(13, 4, "minecraft:white_bed[part=head,facing=north]"); c(13, 5, "minecraft:white_bed[part=foot,facing=north]")
+    c(14, 7, "minecraft:smooth_quartz_slab[type=top]"); c(14, 6, "minecraft:oak_stairs[facing=south,half=bottom]")
+    # lights
+    for (cc, rr) in ((1, 1), (1, 6), (5, 0), (5, 5), (8, 1), (9, 5), (13, 0), (13, 5)):
+        st(U0 + cc, y0 + FH, V0 + rr, "minecraft:sea_lantern")
+    # street wall: C and A windows, sliding door and balcony off the living room
+    ext = D - 1
+    fl(38, y1, ext, 54, y2, ext, "minecraft:terracotta")
+    for u in (40, 41, 43, 44, 52):
+        st(u, y1, ext, "minecraft:glass_pane"); st(u, y1 + 1, ext, "minecraft:glass_pane")
+    fl(46, y1, ext, 49, y1 + 1, ext, "minecraft:glass_pane")
+    door(8, 8, "south", "minecraft:spruce_door")                         # sliding door to the balcony (r8 = street wall)
+    fl(46, y0, ext + 1, 49, y0, ext + 3, "minecraft:polished_blackstone_slab[type=top]")
+    fl(46, y1, ext + 3, 49, y1, ext + 3, "minecraft:iron_bars")
+    fl(46, y1, ext + 1, 46, y1, ext + 3, "minecraft:iron_bars"); fl(49, y1, ext + 1, 49, y1, ext + 3, "minecraft:iron_bars")
+    st(48, y1, ext + 1, "minecraft:air")
 
 
 # ---------------------------------------------------------------- 13th St & University Ave, NW corner (overlay)
@@ -607,12 +686,13 @@ def corner_13th_university():
 
 # ---------------------------------------------------------------- Century Tower
 def century_tower():
-    """Century Tower (1953), from the user's photos on the LiDAR footprint (7 x 7 m, x -396..-390, z 357..363, 46 m).
+    """Century Tower (1953), from the user's photos: 157 ft (48 blocks) to the pinnacles; the 7 x 7 m base is the LiDAR-measured
+    footprint (published figures only estimate it).
     Red-brick shaft with recessed vertical lines near each corner; white cast-stone band; belfry with louvers and two tall arched
     openings per face; white Gothic crown with corner pinnacles, crenellations and mid-face finials. Bells inside, stair up."""
-    S, H_SHAFT, H_BAND, H_BELL, H_CROWN = 7, 33, 34, 42, 46
+    S, H_SHAFT, H_BAND, H_BELL, H_CROWN = 7, 34, 35, 43, 47     # pinnacle tips at 48 blocks = 157 ft
     b = B("century_tower", "Century Tower", "University of Florida, Gainesville, FL 32611",
-          "From photos on the LiDAR footprint and height (46 m to the pinnacles).", (-397, 356), (S + 2, H_CROWN + 4, S + 2))
+          "From photos on the LiDAR footprint and height (46 m to the pinnacles).", (-393, 361), (S + 2, H_CROWN + 4, S + 2))
     o = 1
     BRICK, LINE, STONE = "minecraft:bricks", "minecraft:red_terracotta", "minecraft:smooth_quartz"
     def ring(y0, y1, blk):

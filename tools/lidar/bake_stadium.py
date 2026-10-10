@@ -76,6 +76,7 @@ def lidar_dsm(g):
     """First-return surface (max of building and unclassified returns) over the grid, metres."""
     H, W = g.a["gy"].shape
     dsm = np.full((H, W), np.nan, np.float32)
+    gnd = np.full((H, W), np.nan, np.float32)
     naip = np.zeros((H, W, 3), np.uint8)
     for tx in range((g.x0 - GRID0) // TILE, (g.x1 - 1 - GRID0) // TILE + 1):
         for tz in range((g.z0 - GRID0) // TILE, (g.z1 - 1 - GRID0) // TILE + 1):
@@ -90,10 +91,11 @@ def lidar_dsm(g):
             dst = (slice(sz0 - g.z0, sz1 - g.z0), slice(sx0 - g.x0, sx1 - g.x0))
             src = (slice(sz0 - tz0, sz1 - tz0), slice(sx0 - tx0, sx1 - tx0))
             dsm[dst] = surf[src]
+            gnd[dst] = d["ground"][src]
             npth = CACHE / f"naip_{tx0}_{tz0}_{TILE}.npy"
             if npth.exists():
                 naip[dst] = np.load(npth)[src]
-    return dsm, naip
+    return dsm, naip, gnd
 
 
 def text_mask(text, w, h):
@@ -133,15 +135,17 @@ def main():
     c = np.round(np.array(rect.centroid.coords[0])) + 0.5
     along = (xs - c[0]) * u[0] + (zs - c[1]) * u[1]
     across = (xs - c[0]) * n[0] + (zs - c[1]) * n[1]
-    L, Wd = 120 * YARD, 160 / 3 * YARD          # 120 yards x 53 1/3 yards
+    L, Wd = 120 * YARD, 160 / 3 * YARD          # 360 ft x 160 ft (120 yards x 53 1/3 yards, end zones included)
+    assert abs(L / 0.3048 - 360) < 0.01 and abs(Wd / 0.3048 - 160) < 0.01
     field = (np.abs(along) <= L / 2) & (np.abs(across) <= Wd / 2)
     apron = (np.abs(along) <= L / 2 + 6) & (np.abs(across) <= Wd / 2 + 7)
     wall = apron & ~((np.abs(along) <= L / 2 + 5) & (np.abs(across) <= Wd / 2 + 6))
 
-    dsm, naip = lidar_dsm(g)
+    dsm, naip, gnd = lidar_dsm(g)
     gy = g.a["gy"].astype(np.int32)
-    ground_field = int(np.median(gy[field]))
-    seat_y = np.where(np.isnan(dsm), gy, np.round(bc.SURFACE_Y + (dsm - bc.BASE_M))).astype(np.int32)
+    ground_field = bc.SURFACE_Y
+    field_m = float(np.nanmedian(gnd[field]))           # stands are measured up from the field
+    seat_y = np.where(np.isnan(dsm), gy, np.round(bc.SURFACE_Y + (dsm - field_m))).astype(np.int32)
     seat_y = ndimage.median_filter(seat_y, size=3)
     bowl = in_stadium & ~apron & (seat_y - gy >= 2)
     bowl = ndimage.binary_closing(bowl, structure=np.ones((3, 3)), iterations=2) & in_stadium & ~apron

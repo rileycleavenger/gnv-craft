@@ -8,7 +8,7 @@ HERE = Path(__file__).resolve().parent
 TILE = 1024
 GRID0 = -512                       # tile edges at -512 + 1024 * k, so the first core is tile (0, 0)
 ORIGIN = (29.6521, -82.3393)
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
+TO_UTM = Transformer.from_crs("EPSG:4326", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
 E0, N0 = TO_UTM.transform(ORIGIN[1], ORIGIN[0])
 
 

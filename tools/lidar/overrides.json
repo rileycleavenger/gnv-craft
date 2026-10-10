@@ -4,7 +4,7 @@
   {
    "point": [
     -50,
-    -40
+    -39
    ],
    "name": "The Standard at Gainesville",
    "kind": "apartments",
@@ -13,17 +13,21 @@
    "facade": {
     "base": "minecraft:cut_sandstone",
     "baseFloors": 1,
-    "upper": "minecraft:smooth_sandstone",
+    "upper": "minecraft:smooth_quartz",
     "band": "minecraft:bricks",
-    "bandEvery": 9,
-    "rail": "minecraft:white_stained_glass_pane"
+    "bandEvery": 11,
+    "bay": "minecraft:light_blue_stained_glass",
+    "bayEvery": 8,
+    "rail": "minecraft:white_stained_glass_pane",
+    "roof": "condensers",
+    "parapet": "minecraft:white_stained_glass_pane"
    },
-   "source": "Mapillary 2021 + corner photo: stone-veneer ground floor with the Chick-fil-A at the 13th & University corner, tan stucco and stone above with brick piers, white-railed corner balconies"
+   "source": "User photo + Mapillary: tan stone-veneer ground floor with the Chick-fil-A at the corner, cream body, stacked glass balcony bays with white slab edges, red-brick piers; roof (user aerial photo): glass railing all round, pool deck with palms, planters, hot tubs, pergolas and loungers at the University Ave corner, rows of dark condensers elsewhere"
   },
   {
    "point": [
-    80,
-    -238
+    77,
+    -239
    ],
    "name": "Hub Gainesville (3rd Ave)",
    "kind": "apartments",
@@ -41,8 +45,8 @@
   },
   {
    "point": [
-    60,
-    -70
+    59,
+    -71
    ],
    "name": "Holiday Inn Gainesville University Center",
    "kind": "hotel",
@@ -59,8 +63,8 @@
   },
   {
    "point": [
-    45,
-    -150
+    43,
+    -151
    ],
    "name": "Publix",
    "kind": "supermarket",
@@ -77,7 +81,7 @@
   {
    "point": [
     -173,
-    -30
+    -28
    ],
    "name": "1412 W University Ave",
    "kind": "retail",
@@ -95,8 +99,8 @@
   },
   {
    "point": [
-    435,
-    -145
+    433,
+    -150
    ],
    "name": "201 NW 10th St",
    "kind": "house",
@@ -105,8 +109,8 @@
   },
   {
    "point": [
-    -1170,
-    213
+    -1168,
+    227
    ],
    "name": "Exactech Arena (O'Connell Center)",
    "kind": "stadium",
@@ -121,8 +125,8 @@
   },
   {
    "point": [
-    1319,
-    231
+    1322,
+    216
    ],
    "name": "Alachua County Courthouse",
    "kind": "courthouse",
@@ -139,8 +143,8 @@
   },
   {
    "point": [
-    1699,
-    49
+    1700,
+    29
    ],
    "name": "Headquarters Library",
    "kind": "library",
@@ -157,8 +161,8 @@
   },
   {
    "point": [
-    -659,
-    -155
+    -661,
+    -147
    ],
    "name": "Midtown Apartments",
    "kind": "apartments",
@@ -175,8 +179,8 @@
   },
   {
    "point": [
-    -473,
-    1173
+    -459,
+    1179
    ],
    "name": "UF Health Shands Hospital and UF Health Shands Children's Hospital",
    "kind": "hospital",
@@ -193,8 +197,8 @@
   },
   {
    "point": [
-    1479,
-    294
+    1477,
+    296
    ],
    "name": "Hippodrome State Theatre",
    "kind": "theatre",
@@ -211,8 +215,8 @@
   },
   {
    "point": [
-    6089,
-    -3794
+    6041,
+    -3815
    ],
    "name": "Gainesville Regional Airport",
    "kind": "terminal",
@@ -229,8 +233,8 @@
   },
   {
    "point": [
-    -1000,
-    250
+    -997,
+    262
    ],
    "name": "Ben Hill Griffin Stadium (The Swamp)",
    "kind": "stadium",
@@ -247,8 +251,8 @@
   },
   {
    "point": [
-    -60,
-    -120
+    -61,
+    -119
    ],
    "name": "AC Hotel Gainesville Downtown",
    "kind": "hotel",
@@ -262,14 +266,107 @@
     "bandEvery": 10
    },
    "source": "Separate block north of The Standard across the NW 1st Ave passage (LiDAR gap z -87..-72); aerial photo: white roof with courtyard"
+  },
+  {
+   "point": [
+    -590,
+    -41
+   ],
+   "name": "UF Plaza (Balls, Salty Dog, Grove, Rowdy Reptile, The Social)",
+   "kind": "bar",
+   "levels": 3,
+   "addr": "1702 W University Ave",
+   "facade": {
+    "base": "minecraft:yellow_terracotta",
+    "baseFloors": 1,
+    "upper": "minecraft:yellow_terracotta",
+    "band": "minecraft:orange_terracotta",
+    "bandEvery": 5,
+    "plinth": "minecraft:orange_terracotta",
+    "rail": "minecraft:black_concrete"
+   },
+   "source": "User photo + Mapillary 2016: mustard stucco, square pillars with terracotta bases, arched upper windows, black railings and spiral stair; brick storefronts with black awnings at the west end"
+  },
+  {
+   "point": [
+    1309,
+    67
+   ],
+   "name": "The Atlantic / GoldRoom / Rain",
+   "kind": "bar",
+   "levels": 3,
+   "addr": "15-19 W University Ave",
+   "facade": {
+    "base": "minecraft:smooth_sandstone",
+    "baseFloors": 0,
+    "upper": "minecraft:smooth_sandstone",
+    "plinth": "minecraft:gray_concrete",
+    "band": "minecraft:green_concrete",
+    "bandEvery": 6
+   },
+   "source": "Mapillary 2014-2016: cream stucco, dark-gray base band, dark-green arched awnings"
+  },
+  {
+   "point": [
+    1467,
+    -15
+   ],
+   "name": "Arcade Bar / The Dime / University Club",
+   "kind": "bar",
+   "levels": 3,
+   "addr": "4-18 E University Ave",
+   "facade": {
+    "base": "minecraft:smooth_quartz",
+    "baseFloors": 0,
+    "upper": "minecraft:smooth_quartz",
+    "plinth": "minecraft:stone_bricks",
+    "band": "minecraft:light_gray_concrete",
+    "bandEvery": 7
+   },
+   "source": "Mapillary 2019: pale historic two-to-three story facades with arched upper windows"
+  },
+  {
+   "point": [
+    1140,
+    39
+   ],
+   "name": "Silver Q Billiards & Sports Bar",
+   "kind": "bar",
+   "levels": 3,
+   "addr": "225 W University Ave",
+   "facade": {
+    "base": "minecraft:cut_sandstone",
+    "baseFloors": 0,
+    "upper": "minecraft:cut_sandstone",
+    "band": "minecraft:green_concrete",
+    "bandEvery": 9
+   },
+   "source": "Mapillary 2016-2019: buff masonry with a green awning"
+  },
+  {
+   "point": [
+    1188,
+    -12
+   ],
+   "name": "Vecinos",
+   "kind": "bar",
+   "levels": 3,
+   "addr": "208 W University Ave",
+   "facade": {
+    "base": "minecraft:smooth_sandstone",
+    "baseFloors": 0,
+    "upper": "minecraft:smooth_sandstone",
+    "plinth": "minecraft:gray_concrete"
+   },
+   "source": "Mapillary 2019: tan three-story with a corrugated metal awning"
   }
  ],
  "cuts": [
   {
    "rect": [
-    -112,
-    -86,
-    -4,
+    -113,
+    -85,
+    -5,
     -72
    ],
    "surface": "concrete",

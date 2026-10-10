@@ -68,10 +68,82 @@ public final class SpecialNpcDirector {
 		level.getServer().overworld().setData(ModAttachments.DENNIS_RESPAWN_DAY, today + 1);
 	}
 
+	/** Where Chandler hangs out: the sidewalk in front of the UF Plaza strip in Midtown. */
+	public static BlockPos chandlerHome() {
+		for (GnvRaster.Building b : GnvRaster.buildings()) {
+			if (b.name != null && b.name.startsWith("UF Plaza")) {
+				int x = (b.minX + b.maxX) / 2;
+				int z = b.maxZ + 3;
+				return new BlockPos(x, GnvRaster.standY(x, z), z);
+			}
+		}
+		return new BlockPos(-320, GnvRaster.standY(-320, 8), 8);
+	}
+
+	private static int[] tenthStreet;
+
+	/** {x, z0, z1} of 10th Street (NW and SW) inside the V1 area, from the map. */
+	public static synchronized int[] tenthStreet() {
+		if (tenthStreet == null) {
+			java.util.List<Integer> xs = new java.util.ArrayList<>();
+			int z0 = 0, z1 = 0;
+			for (GnvMap.Road r : GnvMap.get().roads) {
+				if (r.name != null && (r.name.equals("Northwest 10th Street") || r.name.equals("Southwest 10th Street"))) {
+					for (int[] p : r.pts) {
+						if (Math.abs(p[1]) <= 450) {
+							xs.add(p[0]);
+							z0 = Math.min(z0, p[1]);
+							z1 = Math.max(z1, p[1]);
+						}
+					}
+				}
+			}
+			java.util.Collections.sort(xs);
+			int x = xs.isEmpty() ? 415 : xs.get(xs.size() / 2);
+			tenthStreet = new int[] {x, Math.max(-450, z0), Math.min(450, z1)};
+		}
+		return tenthStreet;
+	}
+
+	private static final java.util.Map<String, Long> RESPAWN_AT = new java.util.HashMap<>();
+
+	/** Keeps one of an NPC near its home; if it disappears (killed), it comes back after an in-game day. */
+	private static <T extends net.minecraft.world.entity.Mob> void keepOne(ServerLevel level, String key, net.minecraft.world.entity.EntityType<T> type,
+		BlockPos home, int searchRadius, java.util.function.Consumer<T> setup) {
+		if (level.players().stream().noneMatch(p -> p.blockPosition().distSqr(home) < (long) NEAR * NEAR) || !level.isLoaded(home)) {
+			return;
+		}
+		if (!level.getEntities(type, new AABB(home).inflate(searchRadius), e -> true).isEmpty()) {
+			RESPAWN_AT.remove(key);
+			return;
+		}
+		long now = HeySirDirector.clockTime(level.getServer());
+		Long at = RESPAWN_AT.get(key);
+		if (at == null) {
+			RESPAWN_AT.put(key, Long.MIN_VALUE);   // first time: spawn right away
+		} else if (at == Long.MIN_VALUE) {
+			RESPAWN_AT.put(key, now + HeySirDirector.DAY_TICKS);
+			return;
+		} else if (now < at) {
+			return;
+		}
+		T mob = type.create(level, EntitySpawnReason.EVENT);
+		if (mob != null) {
+			mob.snapTo(home.getX() + 0.5, home.getY(), home.getZ() + 0.5, 0.0F, 0.0F);
+			setup.accept(mob);
+			level.addFreshEntity(mob);
+			RESPAWN_AT.put(key, Long.MIN_VALUE);
+		}
+	}
+
 	static void tick(ServerLevel level) {
 		if (!isGainesville(level) || level.players().isEmpty()) {
 			return;
 		}
+		keepOne(level, "chandler", ModEntities.CHANDLER.get(), chandlerHome(), 96, m -> m.setHomeTo(chandlerHome(), 40));
+		int[] street = tenthStreet();
+		BlockPos donnie = new BlockPos(street[0], GnvRaster.standY(street[0], 0), 0);
+		keepOne(level, "donnie", ModEntities.DONNIE.get(), donnie, 520, m -> ((com.rileycleavenger.gnvcraft.entity.DonnieEntity) m).setStreet(street[0], street[1], street[2]));
 		BlockPos home = dennisHome();
 		if (level.players().stream().noneMatch(p -> p.blockPosition().distSqr(home) < NEAR * NEAR)) {
 			return;

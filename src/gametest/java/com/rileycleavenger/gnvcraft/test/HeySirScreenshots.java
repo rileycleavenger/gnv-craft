@@ -152,6 +152,26 @@ public class HeySirScreenshots {
 				this.shots.add(new Shot(id + "-corridor", 60, false, p -> placeLooking(p, c[0], c[1], c[2], c[3], c[4], c[5])));
 			}
 		}
+		var ch = com.rileycleavenger.gnvcraft.npc.SpecialNpcDirector.chandlerHome();
+		this.shots.add(new Shot("chandler", 160, false, p -> {
+			noHeySir(p);
+			var c = ModEntities.CHANDLER.get().create(p.level(), EntitySpawnReason.COMMAND);
+			c.snapTo(ch.getX() + 0.5, ch.getY(), ch.getZ() + 0.5, 180.0F, 0.0F);
+			c.setNoAi(true);
+			p.level().addFreshEntity(c);
+			placeLooking(p, ch.getX() + 0.5, ch.getY() + 0.2, ch.getZ() + 5.5, ch.getX() + 0.5, ch.getY() + 1.4, ch.getZ() + 0.5);
+		}));
+		int[] tenth = com.rileycleavenger.gnvcraft.npc.SpecialNpcDirector.tenthStreet();
+		this.shots.add(new Shot("donnie", 120, false, p -> {
+			var d = ModEntities.DONNIE.get().create(p.level(), EntitySpawnReason.COMMAND);
+			d.snapTo(tenth[0] + 0.5, y(tenth[0], -60), -60.5, 0.0F, 0.0F);
+			d.setNoAi(true);
+			p.level().addFreshEntity(d);
+			placeLooking(p, tenth[0] + 0.5, y(tenth[0], -54) + 0.2, -54.5, tenth[0] + 0.5, y(tenth[0], -60) + 1.6, -60.5);
+		}));
+		// unit 508 in the Hub, from its living room toward the kitchen wall (spec anchor + unit offsets)
+		this.shots.add(new Shot("hub-unit-508", 80, false, p -> placeLooking(p, 21 + 1 + 39 + 8.5, y(70, -230) + 15.1, -266 + 1 + 57 - 9 + 6.5,
+			21 + 1 + 39 + 10.5, y(70, -230) + 16.2, -266 + 1 + 57 - 9 + 1.5)));
 		// views matching the reference photos
 		this.shots.add(new Shot("hub-corner", 140, false, p -> { noHeySir(p); placeLooking(p, -14, y(-14, -196) + 3, -196, 70, y(70, -235) + 12, -240); }));
 		this.shots.add(new Shot("hub-from-13th", 120, false, p -> placeLooking(p, -45, y(-45, -200) + 26, -205, 40, y(40, -240) + 12, -245)));
@@ -166,8 +186,8 @@ public class HeySirScreenshots {
 			this.shots.add(new Shot("stadium-from-press-box", 120, false, p -> placeLooking(p, fx - 75, swamp.baseY + 42, fz, fx + 20, swamp.baseY, fz)));
 			this.shots.add(new Shot("stadium-field", 100, false, p -> placeLooking(p, fx, swamp.baseY + 2, fz + 40, fx, swamp.baseY + 8, fz - 60)));
 		}
-		this.shots.add(new Shot("century-tower-street", 140, false, p -> placeLooking(p, -393 + 0.5, y(-393, 335) + 1.6, 335, -393 + 0.5, y(-393, 360) + 30, 360)));
-		this.shots.add(new Shot("century-tower-top", 100, false, p -> placeLooking(p, -375, y(-393, 360) + 52, 340, -392.5, y(-393, 360) + 40, 360.5)));
+		this.shots.add(new Shot("century-tower-street", 140, false, p -> placeLooking(p, -389 + 0.5, y(-389, 340) + 1.6, 340, -389 + 0.5, y(-389, 365) + 30, 365)));
+		this.shots.add(new Shot("century-tower-top", 100, false, p -> placeLooking(p, -371, y(-389, 365) + 52, 344, -389 + 0.5, y(-389, 365) + 40, 365 + 0.5)));
 		// landmarks across the V1 area, each from the nearest open street
 		String[][] landmarks = {{"stadium", "Ben Hill Griffin"}, {"century-tower", "Century Tower"}, {"library-west", "Library West"},
 			{"reitz-union", "Reitz Union"}, {"courthouse", "Alachua County Courthouse"}, {"shands", "Shands Hospital"},

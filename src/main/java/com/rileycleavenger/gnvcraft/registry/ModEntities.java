@@ -1,7 +1,9 @@
 package com.rileycleavenger.gnvcraft.registry;
 
 import com.rileycleavenger.gnvcraft.GnvCraftMod;
+import com.rileycleavenger.gnvcraft.entity.ChandlerEntity;
 import com.rileycleavenger.gnvcraft.entity.DennisEntity;
+import com.rileycleavenger.gnvcraft.entity.DonnieEntity;
 import com.rileycleavenger.gnvcraft.entity.FanEntity;
 import com.rileycleavenger.gnvcraft.entity.HeySirEntity;
 import com.rileycleavenger.gnvcraft.entity.LimeScooterEntity;
@@ -56,6 +58,13 @@ public final class ModEntities {
 		builder -> builder.sized(3.0F, 1.6F).passengerAttachments(0.7F).clientTrackingRange(16).updateInterval(2)
 	);
 
+	public static final DeferredHolder<EntityType<?>, EntityType<ChandlerEntity>> CHANDLER = ENTITY_TYPES.registerEntityType(
+		"chandler", ChandlerEntity::new, MobCategory.MISC, builder -> builder.sized(0.6F, 1.8F).eyeHeight(1.62F).clientTrackingRange(10)
+	);
+	public static final DeferredHolder<EntityType<?>, EntityType<DonnieEntity>> DONNIE = ENTITY_TYPES.registerEntityType(
+		"donnie", DonnieEntity::new, MobCategory.MISC, builder -> builder.sized(0.75F, 2.05F).eyeHeight(1.85F).clientTrackingRange(10)
+	);
+
 	private ModEntities() {
 	}
 
@@ -67,6 +76,8 @@ public final class ModEntities {
 	private static void onAttributeCreation(EntityAttributeCreationEvent event) {
 		event.put(HEYSIR.get(), HeySirEntity.createAttributes().build());
 		event.put(DENNIS.get(), DennisEntity.createAttributes().build());
+		event.put(CHANDLER.get(), ChandlerEntity.createAttributes().build());
+		event.put(DONNIE.get(), DonnieEntity.createAttributes().build());
 		event.put(FAN.get(), FanEntity.createAttributes().build());
 		event.put(LIME_SCOOTER.get(), LimeScooterEntity.createAttributes().build());
 		event.put(PLANE.get(), PlaneEntity.createAttributes().build());

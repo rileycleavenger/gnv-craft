@@ -123,6 +123,9 @@ def bake_tile(tx, tz, have, poly):
     blend = np.clip(ndimage.distance_transform_edt(covered) / bc.BLEND, 0, 1).astype(np.float32)
     gy = np.round(bc.SURFACE_Y + (ground_m - bc.BASE_M) * blend).astype(np.int16)
 
+    # flat city: every road, sidewalk and lot sits on one level; buildings, trees and stands keep their measured heights above it
+    gy = np.full((W, W), bc.SURFACE_Y, np.int16)
+
     core = (slice(MARGIN, MARGIN + TILE), slice(MARGIN, MARGIN + TILE))
     key = np.zeros((W, W), np.int64)            # building identity across tiles: global (z, x) of its first cell
     roof_y = np.zeros((W, W), np.int16)
@@ -140,8 +143,7 @@ def bake_tile(tx, tz, have, poly):
         r0 = rows.min()
         c0 = cols[rows == r0].min()
         gkey = int((z0 - MARGIN + k0 + r0 + 100000) * 1000000 + (x0 - MARGIN + i0 + c0 + 100000))
-        bb = float(np.mean(blend[sl][cells]))
-        base_y = int(round(bc.SURFACE_Y + (b["base_m"] - bc.BASE_M) * bb))
+        base_y = bc.SURFACE_Y
         gy[sl][cells] = base_y
         ry = np.clip(np.round(base_y + (roof_m[sl][cells] - b["base_m"])), base_y + 3, base_y + 200).astype(np.int16)
         roof_y[sl][cells] = ry

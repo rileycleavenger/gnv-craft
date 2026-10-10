@@ -31,6 +31,7 @@ public class HeySirClient {
 		event.registerLayerDefinition(HeySirModelLayers.BIKE, BikeModel::createLayer);
 		event.registerLayerDefinition(HeySirModelLayers.DENNIS, DennisModel::createLayer);
 		event.registerLayerDefinition(HeySirModelLayers.FAN, FanModel::createLayer);
+		event.registerLayerDefinition(HeySirModelLayers.NPC, com.rileycleavenger.gnvcraft.client.render.NpcModel::createLayer);
 		event.registerLayerDefinition(HeySirModelLayers.SCOOTER, ScooterModel::createLayer);
 		event.registerLayerDefinition(HeySirModelLayers.PLANE, PlaneModel::createLayer);
 	}
@@ -39,6 +40,8 @@ public class HeySirClient {
 		event.registerEntityRenderer(ModEntities.HEYSIR.get(), HeySirRenderer::new);
 		event.registerEntityRenderer(ModEntities.DENNIS.get(), DennisRenderer::new);
 		event.registerEntityRenderer(ModEntities.FAN.get(), FanRenderer::new);
+		event.registerEntityRenderer(ModEntities.CHANDLER.get(), c -> new com.rileycleavenger.gnvcraft.client.render.NpcRenderer<>(c, "chandler", 1.0F));
+		event.registerEntityRenderer(ModEntities.DONNIE.get(), c -> new com.rileycleavenger.gnvcraft.client.render.NpcRenderer<>(c, "donnie", 1.14F));
 		event.registerEntityRenderer(ModEntities.LIME_SCOOTER.get(), ScooterRenderer::new);
 		event.registerEntityRenderer(ModEntities.PLANE.get(), PlaneRenderer::new);
 	}

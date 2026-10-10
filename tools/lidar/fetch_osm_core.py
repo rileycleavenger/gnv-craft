@@ -50,7 +50,7 @@ def tile_box(x0, z0, size):
     from pyproj import Transformer
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from area import E0, N0
-    to_ll = Transformer.from_crs("EPSG:32617", "EPSG:4326", always_xy=True)
+    to_ll = Transformer.from_crs("+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", "EPSG:4326", always_xy=True)
     lon0, lat0 = to_ll.transform(E0 + x0 - 30, N0 - (z0 + size + 30))
     lon1, lat1 = to_ll.transform(E0 + x0 + size + 30, N0 - (z0 - 30))
     return (round(lat0, 5), round(lon0, 5), round(lat1, 5), round(lon1, 5))

@@ -133,7 +133,7 @@ public class HeySirGameTests {
 
 	private static void npcsSpawn(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
-		for (var type : java.util.List.of(com.rileycleavenger.gnvcraft.registry.ModEntities.DENNIS.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.FAN.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.PLANE.get())) {
+		for (var type : java.util.List.of(com.rileycleavenger.gnvcraft.registry.ModEntities.DENNIS.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.FAN.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.PLANE.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.CHANDLER.get(), com.rileycleavenger.gnvcraft.registry.ModEntities.DONNIE.get())) {
 			helper.assertTrue(type.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND) != null, type + " can be created");
 		}
 		helper.succeed();

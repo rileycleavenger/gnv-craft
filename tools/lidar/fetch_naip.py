@@ -14,8 +14,8 @@ from pyproj import Transformer
 
 CACHE = Path(__file__).resolve().parent / "cache"
 ORIGIN = (29.6521, -82.3393)
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
-TO_LL = Transformer.from_crs("EPSG:32617", "EPSG:4326", always_xy=True)
+TO_UTM = Transformer.from_crs("EPSG:4326", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
+TO_LL = Transformer.from_crs("+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", "EPSG:4326", always_xy=True)
 E0, N0 = TO_UTM.transform(ORIGIN[1], ORIGIN[0])
 
 
@@ -34,7 +34,7 @@ def main(x0, z0, size):
         with rasterio.open(it.assets["image"].href) as src:
             for band in range(3):
                 tmp = np.zeros((size, size), np.uint8)
-                reproject(rasterio.band(src, band + 1), tmp, dst_transform=transform, dst_crs="EPSG:32617", resampling=Resampling.average)
+                reproject(rasterio.band(src, band + 1), tmp, dst_transform=transform, dst_crs="+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", resampling=Resampling.average)
                 dst[band] = np.where(tmp > 0, tmp, dst[band])
     np.save(out, np.moveaxis(dst, 0, -1))
     print("wrote", out, "year", newest)

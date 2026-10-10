@@ -76,6 +76,9 @@ final class RasterChunk {
 		if (f.plinth != null && y == info.baseY + 1) {
 			return b(f.plinth);
 		}
+		if (f.bay != null && f.bayEvery > 0 && floor >= f.baseFloors && Math.floorMod(x + z, f.bayEvery) < 3) {
+			return Math.floorMod(y - info.baseY, Math.max(3, info.floorH)) == 0 ? b("minecraft:white_concrete") : b(f.bay);
+		}
 		if (f.band != null && f.bandEvery > 0 && Math.floorMod(x + z, f.bandEvery) == 0) {
 			return b(f.band);
 		}
@@ -185,7 +188,7 @@ final class RasterChunk {
 		// light poles, antennas and wires are unclassified in this LiDAR too: only real crowns (surrounded by canopy) become trees
 		int support = canopySupport(x, z);
 		// cranes, light towers and wires also come back as "canopy": nothing in Gainesville's tree canopy is over ~32 m
-		if (support < 3 || top - g > 32) {
+		if (support < 3 || top - g > 32 || nearBuilding(x, z, 2) || nearTallerBuilding(x, z, 7, top - 3)) {
 			return;
 		}
 		if (GnvRaster.trunk(x, z) && support >= 7 && (!paved(s) || s == GnvRaster.S_CONCRETE)) {
@@ -261,6 +264,30 @@ final class RasterChunk {
 		} else if ((cm == 4 || cm == 13) && mm >= 1 && mm <= 3) {
 			out.set(x, y, z, b("minecraft:gray_wool"));                    // couch
 		}
+	}
+
+	/** Laser returns off a building's walls look like canopy right next to it; no leaves within r blocks of a building. */
+	private static boolean nearBuilding(int x, int z, int r) {
+		for (int dx = -r; dx <= r; dx++) {
+			for (int dz = -r; dz <= r; dz++) {
+				if (GnvRaster.covers(x + dx, z + dz) && GnvRaster.building(x + dx, z + dz) > 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/** Stray returns off tall facades: no canopy within r blocks of a building whose roof reaches the canopy's height. */
+	private static boolean nearTallerBuilding(int x, int z, int r, int minRoof) {
+		for (int dx = -r; dx <= r; dx += 1) {
+			for (int dz = -r; dz <= r; dz += 1) {
+				if (GnvRaster.covers(x + dx, z + dz) && GnvRaster.building(x + dx, z + dz) > 0 && GnvRaster.roof(x + dx, z + dz) >= minRoof) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static int canopySupport(int x, int z) {
@@ -375,6 +402,59 @@ final class RasterChunk {
 		out.set(x, top, z, b("minecraft:white_concrete"));
 	}
 
+	private static boolean poolNear(int x, int z, int r) {
+		for (int dx = -r; dx <= r; dx++) {
+			for (int dz = -r; dz <= r; dz++) {
+				if (GnvRaster.covers(x + dx, z + dz) && GnvRaster.pool(x + dx, z + dz)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/** Roof dressing above roofY from the building's photo notes: glass railing, condenser rows, pool deck furniture. */
+	private static void roofDressing(GnvRaster.Building info, int bi, int x, int z, int roofY, boolean edge, Sink out) {
+		GnvRaster.Facade f = info.facade;
+		if (f == null) {
+			return;
+		}
+		if (edge) {
+			if (f.parapet != null) {
+				out.set(x, roofY + 1, z, b(f.parapet));
+			}
+			return;
+		}
+		if (!"condensers".equals(f.roof) || GnvRaster.pool(x, z)) {
+			return;
+		}
+		int h = Math.floorMod(x * 31 + z * 17, 23);
+		if (poolNear(x, z, 6)) {
+			out.set(x, roofY, z, b("minecraft:smooth_sandstone"));        // pool deck
+			if (!poolNear(x, z, 1)) {
+				if (h == 0) {
+					for (int y = roofY + 1; y <= roofY + 4; y++) {
+						out.set(x, y, z, b("minecraft:jungle_log"));            // palm
+					}
+					out.set(x, roofY + 5, z, b("minecraft:jungle_leaves[persistent=true]"));
+				} else if (h == 5 || h == 11) {
+					out.set(x, roofY + 1, z, b("minecraft:decorated_pot"));      // orange planters
+				} else if (h % 4 == 1) {
+					out.set(x, roofY + 1, z, b("minecraft:quartz_slab[type=bottom]"));   // loungers
+				} else if (h == 7) {
+					out.set(x, roofY + 1, z, b("minecraft:dark_oak_fence"));
+					out.set(x, roofY + 2, z, b("minecraft:dark_oak_fence"));
+					out.set(x, roofY + 3, z, b("minecraft:cyan_carpet"));       // teal umbrella
+				}
+			}
+			return;
+		}
+		boolean inner = sameBuilding(bi, x - 2, z) && sameBuilding(bi, x + 2, z) && sameBuilding(bi, x, z - 2) && sameBuilding(bi, x, z + 2);
+		if (inner && Math.floorMod(x, 3) != 2 && Math.floorMod(z, 5) < 2) {
+			out.set(x, roofY + 1, z, b("minecraft:polished_deepslate"));   // condenser rows
+		}
+	}
+
 	private static boolean sameBuilding(int bi, int x, int z) {
 		return GnvRaster.covers(x, z) && GnvRaster.building(x, z) == bi;
 	}
@@ -465,5 +545,6 @@ final class RasterChunk {
 				}
 			}
 		}
+		roofDressing(info, bi, x, z, roofY, edge, out);
 	}
 }

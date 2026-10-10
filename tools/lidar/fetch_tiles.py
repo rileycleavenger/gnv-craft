@@ -16,8 +16,8 @@ from area import tiles, TILE, E0, N0
 
 EPT = "https://s3-us-west-2.amazonaws.com/usgs-lidar-public/FL_Peninsular_FDEM_Alachua_2018/"
 OUT = Path(__file__).resolve().parent / "cache" / "lidar"
-MERC_TO_UTM = Transformer.from_crs("EPSG:3857", "EPSG:32617", always_xy=True)
-UTM_TO_MERC = Transformer.from_crs("EPSG:32617", "EPSG:3857", always_xy=True)
+MERC_TO_UTM = Transformer.from_crs("EPSG:3857", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
+UTM_TO_MERC = Transformer.from_crs("+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", "EPSG:3857", always_xy=True)
 
 
 def get(url, tries=6):

@@ -37,7 +37,7 @@ SURFACE_Y = 63          # outside the LiDAR core the world is flat at this Y
 BASE_M = 50.0           # NAVD88 metres that map to SURFACE_Y; Gainesville's core sits around 45-55 m
 BLEND = 48              # blocks over which the core's terrain eases back to SURFACE_Y at its edge
 ORIGIN = (29.6521, -82.3393)
-TO_UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
+TO_UTM = Transformer.from_crs("EPSG:4326", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
 E0, N0 = TO_UTM.transform(ORIGIN[1], ORIGIN[0])
 
 # roof blocks and their average colours (NAIP sees roofs from above; nearest colour wins)
@@ -179,6 +179,53 @@ def road_width(t):
     return w, lanes
 
 
+SNAP_DEG = 4.0
+
+
+def snap_angle(theta_deg):
+    """Rotation (degrees) that makes a direction exactly axis-aligned, or 0 if it is not within SNAP_DEG of an axis."""
+    r = ((theta_deg + 45) % 90) - 45
+    return -r if abs(r) <= SNAP_DEG else 0.0
+
+
+def straighten(pts, tol=1.2):
+    """A way that is straight to within `tol` metres becomes a perfect line (axis-aligned if within SNAP_DEG of the grid).
+    Curved ways keep their surveyed shape."""
+    if len(pts) < 2:
+        return pts
+    P = np.array(pts, float)
+    c = P.mean(0)
+    _, _, vt = np.linalg.svd(P - c)
+    d = vt[0]
+    resid = np.abs((P - c) @ np.array([-d[1], d[0]]))
+    if resid.max() <= tol and np.hypot(*(P[-1] - P[0])) > 4:
+        ang = math.degrees(math.atan2(d[1], d[0]))
+        rot = math.radians(snap_angle(ang))
+        d = np.array([d[0] * math.cos(rot) - d[1] * math.sin(rot), d[0] * math.sin(rot) + d[1] * math.cos(rot)])
+        t = (P - c) @ d
+        return [tuple(c + d * t.min()), tuple(c + d * t.max())]
+    # curved ways: straighten each run of nearly collinear nodes, keeping the run's endpoints so the way stays connected
+    return [tuple(q) for q in P]
+
+
+def snap_polygon(poly):
+    """Rotate a footprint about its centroid so its dominant edges are axis-aligned (if within SNAP_DEG)."""
+    from shapely import affinity
+    rect = poly.minimum_rotated_rectangle
+    pts = np.array(rect.exterior.coords)[:4]
+    e = max((pts[(i + 1) % 4] - pts[i] for i in range(4)), key=lambda v: np.hypot(*v))
+    r = snap_angle(math.degrees(math.atan2(e[1], e[0])))
+    return affinity.rotate(poly, r, origin="centroid") if r else poly
+
+
+def raster_window(poly, sl):
+    """Boolean mask of `poly` over the grid window `sl` (cell centres)."""
+    from shapely import contains_xy
+    k0, i0 = sl[0].start, sl[1].start
+    xs, zs = np.meshgrid(np.arange(sl[1].stop - i0) + i0 + X0 + 0.5, np.arange(sl[0].stop - k0) + k0 + Z0 + 0.5)
+    return contains_xy(poly, xs, zs)
+
+
 def burn_roads(osm, surface):
     """Carriageways, lane markings, sidewalks/paths and crosswalks."""
     cxs = np.arange(SIZE) + X0 + 0.5
@@ -189,7 +236,7 @@ def burn_roads(osm, surface):
             continue
         if t.get("area") == "yes":
             continue
-        pts = [proj(g["lon"], g["lat"]) for g in el["geometry"]]
+        pts = straighten([proj(g["lon"], g["lat"]) for g in el["geometry"]])
         roads.append((t, pts, el["id"]))
     # paths first (narrow), then carriageways on top
     def segs(pts):
@@ -390,6 +437,7 @@ def build_buildings(osm, ground, bld, surface):
     vid = np.zeros((SIZE, SIZE), np.int32)
     rasterize_polys([(v["poly"], idx + 1) for idx, v in enumerate(vec)], lambda q: q, vid)
 
+    lab = regularize(lab, vid, vec)
     out = []
     # (1) LiDAR buildings, named from the vector footprint they overlap most
     objs = ndimage.find_objects(lab)
@@ -409,12 +457,18 @@ def build_buildings(osm, ground, bld, surface):
                         kind=meta["kind"] if meta else "yes", src="lidar", addr=meta["addr"] if meta else "", osm=meta["id"] if meta else None))
     # (2) footprints with a known height that the 2018 LiDAR doesn't have (built after the flight, e.g. Hub on 3rd Ave)
     for v in vec:
-        hgt = v["height"] or (v["levels"] * 3.6 if v["levels"] else None)
-        if not hgt or v["poly"].area < 150:
+        if v["poly"].area < 25 or (v["kind"] in ("roof", "carport", "corridor", "no", "construction")):
             continue
+        hgt = v["height"] or (v["levels"] * 3.6 if v["levels"] else None)
+        if not hgt:
+            # built after the 2018 scan or hidden under canopy, no tagged height: a sensible default for the type
+            k, a = v["kind"] or "yes", v["poly"].area
+            hgt = (6 if k in ("apartments", "dormitory", "residential") and a > 1500 else
+                   3 if k in ("apartments", "dormitory", "residential") else
+                   1 if k in ("house", "detached", "shed", "garage") else 2 if a > 600 else 1) * 3.8
         tmp = np.zeros((SIZE, SIZE), bool)
-        rasterize_polys([(v["poly"], 1)], lambda q: True, tmp)
-        if tmp.sum() < 50:
+        rasterize_polys([(snap_polygon(v["poly"]), 1)], lambda q: True, tmp)
+        if tmp.sum() < 20:
             continue
         cover = (lab[tmp] > 0).mean()
         if cover > 0.3:
@@ -428,6 +482,44 @@ def build_buildings(osm, ground, bld, surface):
         out.append(dict(cells=(sl, cells), base_m=base, height=float(hgt), levels=int(v["levels"] or max(1, round(hgt / 3.6))),
                         name=v["name"], kind=v["kind"], src=v["src"], addr=v["addr"], osm=v["id"]))
     return out, roof
+
+
+def regularize(lab, vid, vec):
+    """Straight walls: each LiDAR building takes its vector outline (OSM/Overture, snapped to the grid) when they agree, else
+    becomes its snapped minimum rectangle when it is essentially rectangular, else is just smoothed."""
+    from shapely.geometry import MultiPoint
+    out = np.zeros_like(lab)
+    objs = ndimage.find_objects(lab)
+    for bi, sl in enumerate(objs, start=1):
+        if sl is None:
+            continue
+        pad = 4
+        sl = (slice(max(0, sl[0].start - pad), min(SIZE, sl[0].stop + pad)), slice(max(0, sl[1].start - pad), min(SIZE, sl[1].stop + pad)))
+        cells = lab[sl] == bi
+        n = int(cells.sum())
+        new = None
+        ids = vid[sl][cells]
+        ids = ids[ids > 0]
+        if len(ids):
+            k = int(np.bincount(ids).argmax())
+            poly = snap_polygon(vec[k - 1]["poly"])
+            vm = raster_window(poly, sl)
+            inter = (vm & cells).sum()
+            if vm.sum() and inter / (vm | cells).sum() >= 0.55:
+                new = vm
+        if new is None and n >= 20:
+            rr, cc = np.nonzero(cells)
+            pts = MultiPoint(list(zip(cc + sl[1].start + X0 + 0.5, rr + sl[0].start + Z0 + 0.5)))
+            rect = snap_polygon(pts.minimum_rotated_rectangle.buffer(0.5, join_style=2))
+            if n / max(1.0, rect.area) >= 0.82:
+                new = raster_window(rect, sl)
+        if new is None:
+            new = ndimage.binary_opening(ndimage.binary_closing(cells, np.ones((3, 3))), np.ones((2, 2))) | cells & False
+            if new.sum() < 12:
+                new = cells
+        sub = out[sl]
+        sub[new & (sub == 0)] = bi
+    return out
 
 
 def place_features(b, surface, bidx):

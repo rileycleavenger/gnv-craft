@@ -18,5 +18,9 @@
   "entity.gnvcraft.lime_scooter": "Lime Scooter",
   "entity.gnvcraft.plane": "Cessna-style Plane",
   "block.gnvcraft.elevator": "Elevator",
-  "block.gnvcraft.bar_tap": "Bar Tap"
+  "block.gnvcraft.bar_tap": "Bar Tap",
+  "entity.gnvcraft.chandler": "Chandler",
+  "entity.gnvcraft.donnie": "Donnie",
+  "item.gnvcraft.napkin": "Napkin",
+  "item.gnvcraft.donnie_id": "Donnie's ID"
 }

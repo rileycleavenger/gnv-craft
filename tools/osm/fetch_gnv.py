@@ -94,7 +94,7 @@ def fetch():
 
 try:
     from pyproj import Transformer
-    _UTM = Transformer.from_crs("EPSG:4326", "EPSG:32617", always_xy=True)
+    _UTM = Transformer.from_crs("EPSG:4326", "+proj=tmerc +lat_0=29.6521 +lon_0=-82.3393 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs", always_xy=True)
 except ImportError:  # run with tools/.venv/bin/python so OSM lines up exactly with the LiDAR grid
     _UTM = None
 
